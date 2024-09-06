@@ -1,33 +1,70 @@
-/* Navbar.css */
+/* Navbar elegante en blanco y negro */
 .navbar {
-  height: 60px; /* Altura del navbar */
-  background-color: #ffffff; /* Fondo blanco */
+  width: 100%;
+  height: 60px;
+  background-color: #17202a;  /* Fondo blanco */
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
-  position: fixed; /* Fijo en la parte superior */
+  color: #ffffff;  /* Texto negro */
+  position: fixed;
   top: 0;
-  left: 250px; /* Comienza después del sidebar */
-  right: 0;
-  border-bottom: 1px solid #ddd; /* Línea en la parte inferior */
-  z-index: 1000; /* Asegura que esté sobre el contenido */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  /* Sombra ligera */
+  z-index: 1001;
 }
 
-/* Sección izquierda (botón de menú) */
-.left-section i {
-  font-size: 24px;
+.navbar-title {
+  font-size: 22px;
+  font-weight: bold;
+  color: #ffffff;  /* Título en negro */
+  font-family: 'Roboto', sans-serif;  /* Fuente moderna */
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  color: #ffffff;  /* Botón de menú blanco */
+  font-size: 30px;
   cursor: pointer;
 }
 
-/* Sección derecha (nombre del usuario) */
-.right-section {
+.navbar-right {
   display: flex;
   align-items: center;
 }
 
-.user-name {
-  font-size: 16px;
-  font-weight: 500;
-  color: #333;
+.notification-icon {
+  font-size: 24px;
+  margin-right: 20px;
+  cursor: pointer;
+  color: #ffffff;  /* Icono de notificación en negro */
+  position: relative;
+}
+
+.notification-icon::after {
+  content: "2";  /* Número de notificaciones */
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #e74c3c;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+}
+
+.username {
+  margin-right: 20px;
+  font-size: 18px;
+  font-family: 'Roboto', sans-serif;  /* Fuente moderna */
+  color: #ffffff;  /* Nombre de usuario en negro */
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ffffff;  /* Borde negro */
 }
