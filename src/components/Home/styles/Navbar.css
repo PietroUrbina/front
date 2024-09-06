@@ -1,0 +1,33 @@
+/* Navbar.css */
+.navbar {
+  height: 60px; /* Altura del navbar */
+  background-color: #ffffff; /* Fondo blanco */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  position: fixed; /* Fijo en la parte superior */
+  top: 0;
+  left: 250px; /* Comienza después del sidebar */
+  right: 0;
+  border-bottom: 1px solid #ddd; /* Línea en la parte inferior */
+  z-index: 1000; /* Asegura que esté sobre el contenido */
+}
+
+/* Sección izquierda (botón de menú) */
+.left-section i {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Sección derecha (nombre del usuario) */
+.right-section {
+  display: flex;
+  align-items: center;
+}
+
+.user-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+}

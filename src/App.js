@@ -1,23 +1,38 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+// Importamos los componentes
+import CompShowUsers from './components/users/ShowUsers';
+import CompCreateUsers from './components/users/createUsers';
+import CompEditUsers from "./components/users/EditUsers";
+import Sidebar from './components/Home/Sidebar';
+import Navbar from './components/Home/Navbar';
 
 function App() {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  // Función para alternar el estado del sidebar
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <BrowserRouter>
+        {/* Sidebar que puede colapsarse */}
+        <Sidebar isCollapsed={isCollapsed} />
+
+        {/* Navbar que controla el sidebar */}
+        <div className={`main-content ${isCollapsed ? 'collapsed' : ''}`}>
+          {/* <Navbar toggleSidebar={toggleSidebar} /> */}
+          <Routes>
+            <Route path='/' element={<CompShowUsers />} />
+            <Route path='/create' element={<CompCreateUsers />} />
+            <Route path='/edit/:id' element={<CompEditUsers />} />
+          </Routes>
+        </div>
+      </BrowserRouter>
     </div>
   );
 }

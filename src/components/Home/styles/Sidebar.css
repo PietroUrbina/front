@@ -1,0 +1,47 @@
+/* Sidebar.css */
+.sidebar {
+  width: 250px; /* Ancho del sidebar */
+  height: 100vh; /* Ocupa toda la altura de la pantalla */
+  background-color: #2d2d2d; /* Color de fondo */
+  position: fixed; /* Fijo en la pantalla */
+  left: 0;
+  top: 0;
+  padding-top: 20px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Estilo del logo */
+.logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.logo img {
+  width: 50px; /* Tamaño ajustado del logo */
+}
+
+/* Menú de navegación */
+.menu {
+  list-style: none;
+  padding: 0;
+}
+
+.menu li {
+  margin-bottom: 15px; /* Espacio entre los elementos */
+}
+
+.menu li a {
+  text-decoration: none; /* Elimina subrayado */
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.menu li a:hover {
+  background-color: #007bff; /* Cambio de color al pasar el mouse */
+}
