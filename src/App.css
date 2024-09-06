@@ -1,22 +1,20 @@
-/* App.css */
+/* src/App.css */
 
-/* El contenido principal comenzará después del sidebar */
+/* Estilo para el contenido principal */
 .main-content {
   margin-left: 250px; /* Espacio reservado para el sidebar */
-  margin-top: 60px; /* Espacio reservado para el navbar */
   padding: 20px;
   transition: margin-left 0.3s ease;
 }
 
-/* Si el sidebar está colapsado */
+/* Cuando el sidebar está colapsado */
 .main-content.collapsed {
-  margin-left: 80px; /* Espacio menor si el sidebar se colapsa */
+  margin-left: 80px;
 }
 
 /* Ajuste responsivo para pantallas pequeñas */
 @media (max-width: 768px) {
   .main-content {
-    margin-left: 80px; /* Espacio reducido para el sidebar colapsado */
-    margin-top: 60px; /* Espacio para el navbar */
+    margin-left: 80px;
   }
 }

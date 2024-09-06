@@ -1,3 +1,4 @@
+// src/App.js
 import React, { useState } from 'react';
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -6,6 +7,15 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import CompShowUsers from './components/users/ShowUsers';
 import CompCreateUsers from './components/users/createUsers';
 import CompEditUsers from "./components/users/EditUsers";
+
+import CompShowBox from './components/box/showBox';
+import CompCreateBox from './components/box/createBox';
+import CompEditBox from "./components/box/editBox";
+
+import CompshowProducts from './components/products/showProducts';
+import CompcreateProducts from './components/products/createProducts';
+import CompeditProducts from "./components/products/editProducts";
+
 import Sidebar from './components/Home/Sidebar';
 import Navbar from './components/Home/Navbar';
 
@@ -25,11 +35,20 @@ function App() {
 
         {/* Navbar que controla el sidebar */}
         <div className={`main-content ${isCollapsed ? 'collapsed' : ''}`}>
-          {/* <Navbar toggleSidebar={toggleSidebar} /> */}
-          <Routes>
-            <Route path='/' element={<CompShowUsers />} />
+          <Navbar toggleSidebar={toggleSidebar} />
+          <Routes> */
+            {/* <Route path='/' element={<CompShowUsers />} />
             <Route path='/create' element={<CompCreateUsers />} />
-            <Route path='/edit/:id' element={<CompEditUsers />} />
+            <Route path='/edit/:id' element={<CompEditUsers />} /> */}
+
+            {/* <Route path='/' element={<CompShowBox />} />
+            <Route path='/create' element={<CompCreateBox />} />
+            <Route path='/edit/:id' element={<CompEditBox />} /> */}
+
+            <Route path='/' element={<CompshowProducts />} />
+            <Route path='/create' element={<CompcreateProducts />} />
+            <Route path='/edit/:id' element={<CompeditProducts />} />
+            
           </Routes>
         </div>
       </BrowserRouter>
