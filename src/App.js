@@ -32,9 +32,8 @@ function App() {
         {/* Sidebar que puede colapsarse */}
         <Sidebar isCollapsed={isCollapsed} />
 
-        {/* Navbar que controla el sidebar */}
+        {/* Navbar que controla el sidebar */}c
         <div className={`main-content ${isCollapsed ? 'collapsed' : ''}`}>
-          <Navbar toggleSidebar={toggleSidebar} />
           <Routes> */
             {/* <Route path='/' element={<CompShowUsers />} />
             <Route path='/create' element={<CompCreateUsers />} />

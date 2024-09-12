@@ -16,9 +16,9 @@ function Sidebar() {
     <>
       {/* Barra superior */}
       <div className="navbar">
-      <button className="menu-btn" onClick={toggleSidebar}>
-        <i className="bx bx-menu"></i>  {/* Ícono de menú fijo */}
-      </button>
+        <button className="menu-btn" onClick={toggleSidebar}>
+          <i className="bx bx-menu"></i>  {/* Ícono de menú fijo */}
+        </button>
       
         <h1 className="navbar-title">Disco Bar</h1>
         <div className="navbar-right">
@@ -29,7 +29,7 @@ function Sidebar() {
       </div>
 
       {/* Sidebar */}
-      <div className={isOpen ? "sidebar open" : "sidebar"}>
+      <div className={isOpen ? "sidebar open" : "sidebar collapsed"}>
         <div className="logo">
           <img src={image} alt="Logo" className="logo-image" />
         </div>
@@ -38,25 +38,25 @@ function Sidebar() {
           <li>
             <Link to="/home">
               <i className="bx bxs-home"></i>
-              <span>Inicio</span>
+              {isOpen && <span>Inicio</span>}
             </Link>
           </li>
           <li>
             <Link to="/venta">
               <i className="bx bx-dollar-circle"></i>
-              <span>Generar venta</span>
+              {isOpen && <span>Generar venta</span>}
             </Link>
           </li>
           <li>
             <Link to="/facturas">
               <i className="bx bx-bar-chart-alt-2"></i>
-              <span>Ventas Realizadas</span>
+              {isOpen && <span>Ventas Realizadas</span>}
             </Link>
           </li>
           <li>
             <Link to="/almacen">
               <i className="bx bxs-archive"></i>
-              <span>Almacén</span>
+              {isOpen && <span>Almacén</span>}
             </Link>
           </li>
         </ul>

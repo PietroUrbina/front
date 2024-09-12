@@ -2,18 +2,18 @@
 .sidebar {
   position: fixed;
   top: 60px; /* Espacio para el navbar */
-  left: -250px; /* Escondido inicialmente */
+  left: 0;
   width: 250px;
   height: 100vh;
   background-color: #000000;  /* Fondo negro puro */
-  transition: left 0.4s ease;
+  transition: width 0.4s ease;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);  /* Sombra suave */
   z-index: 1000;
   padding-top: 20px;
 }
 
-.sidebar.open {
-  left: 0;
+.sidebar.collapsed {
+  width: 80px; /* Ancho reducido cuando está colapsado */
 }
 
 /* Logo del sidebar */
@@ -23,7 +23,7 @@
 }
 
 .logo-image {
-  width: 100px;
+  width: 50px;
   height: auto;
   transition: transform 0.3s ease;
   border-radius: 50%;  /* Avatar circular */
@@ -60,4 +60,13 @@
 .menu li a:hover {
   background-color: #333333;
   color: #ffffff;
+}
+
+/* Estilo cuando el sidebar está colapsado */
+.sidebar.collapsed .menu li a {
+  justify-content: center;
+}
+
+.sidebar.collapsed .menu li a span {
+  display: none;  /* Ocultar los textos cuando está colapsado */
 }
