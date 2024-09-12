@@ -17,7 +17,6 @@ import CompcreateProducts from './components/products/createProducts';
 import CompeditProducts from "./components/products/editProducts";
 
 import Sidebar from './components/Home/Sidebar';
-import Navbar from './components/Home/Navbar';
 
 function App() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -35,15 +34,15 @@ function App() {
 
         {/* Navbar que controla el sidebar */}
         <div className={`main-content ${isCollapsed ? 'collapsed' : ''}`}>
-          <Navbar toggleSidebar={toggleSidebar} />
+          
           <Routes> */
-            {/* <Route path='/' element={<CompShowUsers />} />
+            <Route path='/' element={<CompShowUsers />} />
             <Route path='/create' element={<CompCreateUsers />} />
-            <Route path='/edit/:id' element={<CompEditUsers />} /> */}
+            <Route path='/edit/:id' element={<CompEditUsers />} />
 
-            {/* <Route path='/' element={<CompShowBox />} />
+            <Route path='/' element={<CompShowBox />} />
             <Route path='/create' element={<CompCreateBox />} />
-            <Route path='/edit/:id' element={<CompEditBox />} /> */}
+            <Route path='/edit/:id' element={<CompEditBox />} />
 
             <Route path='/' element={<CompshowProducts />} />
             <Route path='/create' element={<CompcreateProducts />} />
