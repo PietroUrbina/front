@@ -41,11 +41,15 @@ const CompEditUsers = () => {
                 contrasena,
                 rol
             });
-            navigate('/');
+            navigate('/usuarios');
         } catch (error) {
             console.error("Error al actualizar el usuario:", error);
         }
     };
+
+    const cancelar = () => {
+        navigate('/usuarios'); // Redireccionar a la página de lista de clientes
+      };
 
     return (
         <div className="container mt-5">
@@ -93,9 +97,10 @@ const CompEditUsers = () => {
                                         ))}
                                     </select>
                                 </div>
-                                <button type="submit" className="btn btn-primary">
-                                    Guardar
-                                </button>
+                                <div className="form-group text-center">
+                                <button type="submit" className="btn btn-primary mr-4 mx-4">Guardar</button>
+                                <button type="button" className="btn btn-danger" onClick={cancelar}>Cancelar</button>
+                                </div>
                             </form>
                         </div>
                     </div>

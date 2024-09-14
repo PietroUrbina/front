@@ -1,75 +1,95 @@
 import axios from 'axios';
-import {useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import '../../assets/styles/mainTables.scss'; // Asegúrate de que esta ruta es correcta
 
-// Definir la URI para tu API
-const URI = 'http://localhost:8000/box/'
+const URI = 'http://localhost:8000/box/';
 
 const CompShowBox = () => {
-    // Estado para almacenar los boxes
-    const [boxes, setBoxes] = useState([])
+    const [boxes, setBoxes] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [boxesPerPage] = useState(10); // Boxes por página
 
     useEffect(() => {
-        getBoxes()
-    }, [])
+        getBoxes();
+    }, []);
 
-    // Procedimiento para obtener todos los boxes
     const getBoxes = async () => {
-        try {
-            const res = await axios.get(URI)
-            console.log(res.data) // Verifica si los datos están llegando correctamente
-            setBoxes(res.data)
-        } catch (error) {
-            console.error('Error al obtener los boxes:', error);
-        }
-    }
+        const res = await axios.get(URI);
+        setBoxes(res.data);
+    };
 
-    // Procedimiento para eliminar un Box
     const deleteBox = async (id) => {
-        try {
-            await axios.delete(`${URI}${id}`)
-            getBoxes()
-        } catch (error) {
-            console.error('Error al eliminar el box:', error);
-        }
-    }
+        await axios.delete(`${URI}${id}`);
+        getBoxes();
+    };
+
+    const handleSearch = (e) => {
+        setSearchTerm(e.target.value);
+    };
+
+    // Filtrar boxes según término de búsqueda
+    const filteredBoxes = boxes.filter(box =>
+        box.nombre_box.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    // Paginación
+    const indexOfLastBox = currentPage * boxesPerPage;
+    const indexOfFirstBox = indexOfLastBox - boxesPerPage;
+    const currentBoxes = filteredBoxes.slice(indexOfFirstBox, indexOfLastBox);
+
+    // Cambiar página
+    const paginate = pageNumber => setCurrentPage(pageNumber);
 
     return (
         <div className='container'>
-            <div className='row'>
-                <div className='col'>
-                    <Link to="/create" className='btn btn-primary mt-2 mb-2'>
-                        <i className="fa-solid fa-plus"></i>
-                    </Link>
-                    <table className='table'>
-                        <thead>
-                            <tr>
-                                <th>Nombre del Box</th>
-                                <th>Capacidad</th>
-                                <th>Acciones</th>    
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {boxes.map((box) => (
-                                <tr key={box.id}>
-                                    <td>{box.nombre_box}</td>
-                                    <td>{box.capacidad}</td>
-                                    <td>
-                                        <Link to={`/edit/${box.id}`} className='btn btn-info'>
-                                            <i className="fa-solid fa-pen-to-square"></i>
-                                        </Link> 
-                                        <button onClick={() => deleteBox(box.id)} className='btn btn-danger'>
-                                            <i className="fa-solid fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+            <div className='table-header'>
+                <Link to="/box/create" className='btn btn-primary add-button'>
+                    + Agregar Box
+                </Link>
+                <input
+                    type="text"
+                    className="search-input"
+                    placeholder="Buscar boxes..."
+                    value={searchTerm}
+                    onChange={handleSearch}
+                />
+            </div>
+            <table className="table">
+                <thead>
+                    <tr>
+                        <th>Nombre del Box</th>
+                        <th>Capacidad</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {currentBoxes.map((box) => (
+                        <tr key={box.id}>
+                            <td>{box.nombre_box}</td>
+                            <td>{box.capacidad}</td>
+                            <td>
+                                <Link to={`/box/edit/${box.id}`} className='btn btn-info'>
+                                    <i className="fa-solid fa-pen-to-square"></i>
+                                </Link> 
+                                <button onClick={() => deleteBox(box.id)} className='btn btn-danger'>
+                                    <i className="fa-solid fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+            <div className="pagination">
+                {[...Array(Math.ceil(filteredBoxes.length / boxesPerPage)).keys()].map(number => (
+                    <button key={number + 1} onClick={() => paginate(number + 1)} className={currentPage === number + 1 ? 'active' : ''}>
+                        {number + 1}
+                    </button>
+                ))}
             </div>
         </div>
     )
 }
 
-export default CompShowBox
+export default CompShowBox;

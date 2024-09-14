@@ -43,11 +43,15 @@ const CompEditProduct = () => {
                 // Si no se especifica la fecha, enviar null al backend
                 fecha_vencimiento: fecha_vencimiento || null
             });
-            navigate('/');
+            navigate('/productos');
         } catch (error) {
             console.error("Error al actualizar el Producto:", error);
         }
     };
+
+    const cancelar = () => {
+        navigate('/productos'); 
+      };
 
     return (
         <div className="container mt-5">
@@ -98,9 +102,10 @@ const CompEditProduct = () => {
                                         className="form-control"
                                     />
                                 </div>
-                                <button type="submit" className="btn btn-primary">
-                                    Guardar
-                                </button>
+                                <div className="form-group text-center">
+                                <button type="submit" className="btn btn-primary mr-4 mx-4">Guardar</button>
+                                <button type="button" className="btn btn-danger" onClick={cancelar}>Cancelar</button>
+                                </div>
                             </form>
                         </div>
                     </div>

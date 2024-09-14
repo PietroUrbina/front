@@ -13,7 +13,11 @@ const CompCreateBox = () => {
   const guardar = async (e) => {
     e.preventDefault(); // Corregido
     await axios.post(URI, { nombre_box, capacidad });
-    navigate('/');
+    navigate('/box');
+  };
+
+  const cancelar = () => {
+    navigate('/box'); 
   };
 
   return (
@@ -46,9 +50,10 @@ const CompCreateBox = () => {
                     required
                   />
                 </div>
-                <button type="submit" className="btn btn-primary">
-                  Guardar
-                </button>
+                <div className="form-group text-center">
+                <button type="submit" className="btn btn-primary mr-4 mx-4">Guardar</button>
+                <button type="button" className="btn btn-danger" onClick={cancelar}>Cancelar</button>
+                </div>
               </form>
             </div>
           </div>

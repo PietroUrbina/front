@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 const URI = 'http://localhost:8000/productos/';
 
-const CompCreateProduct = () => {
+const CompCreateProducts = () => {
   const [nombre, setNombre] = useState('');
   const [precio, setPrecio] = useState('');
   const [stock, setStock] = useState('');
@@ -24,7 +24,11 @@ const CompCreateProduct = () => {
     };
 
     await axios.post(URI, productoData);
-    navigate('/');
+    navigate('/productos');
+  };
+  
+  const cancelar = () => {
+    navigate('/productos'); 
   };
 
   return (
@@ -76,10 +80,10 @@ const CompCreateProduct = () => {
                     className="form-control"
                   />
                 </div>
-                
-                <button type="submit" className="btn btn-primary">
-                  Guardar
-                </button>
+                <div className="form-group text-center">
+                <button type="submit" className="btn btn-primary mr-4 mx-4">Guardar</button>
+                <button type="button" className="btn btn-danger" onClick={cancelar}>Cancelar</button>
+                </div>
               </form>
             </div>
           </div>
@@ -89,4 +93,4 @@ const CompCreateProduct = () => {
   );
 };
 
-export default CompCreateProduct;
+export default CompCreateProducts;

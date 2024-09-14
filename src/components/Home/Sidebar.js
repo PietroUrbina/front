@@ -19,24 +19,24 @@ function Sidebar() {
         <button className="menu-btn" onClick={toggleSidebar}>
           <i className="bx bx-menu"></i>  {/* Ícono de menú fijo */}
         </button>
-      
-        <h1 className="navbar-title">Disco Bar</h1>
+        <h1 className="navbar-title">CULTO DISCO</h1>
         <div className="navbar-right">
           <i className="bx bxs-bell notification-icon"></i>
           <span className="username">Daniel</span>
-          <img src="/assets/user.png" alt="Usuario" className="user-avatar" />
         </div>
       </div>
 
       {/* Sidebar */}
       <div className={isOpen ? "sidebar open" : "sidebar collapsed"}>
         <div className="logo">
+          <Link to={"/Home"}>
           <img src={image} alt="Logo" className="logo-image" />
+          </Link>
         </div>
 
         <ul className="menu">
           <li>
-            <Link to="/home">
+            <Link to="/Home">
               <i className="bx bxs-home"></i>
               {isOpen && <span>Inicio</span>}
             </Link>
@@ -57,6 +57,30 @@ function Sidebar() {
             <Link to="/almacen">
               <i className="bx bxs-archive"></i>
               {isOpen && <span>Almacén</span>}
+            </Link>
+          </li>
+          <li>
+            <Link to="/productos">
+              <i className="bx bx-box"></i>
+              {isOpen && <span>Productos</span>}
+            </Link>
+          </li>
+          <li>
+            <Link to="/clientes">
+              <i className="bx bxs-user"></i>
+              {isOpen && <span>Clientes</span>}
+            </Link>
+          </li>
+          <li>
+            <Link to="/box">
+              <i className="bx bx-cube"></i>
+              {isOpen && <span>Box</span>}
+            </Link>
+          </li>
+          <li>
+            <Link to="/usuarios">
+              <i className="bx bxs-user-circle"></i>
+              {isOpen && <span>Usuarios</span>}
             </Link>
           </li>
         </ul>

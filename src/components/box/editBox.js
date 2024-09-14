@@ -35,11 +35,15 @@ const CompEditBox = () => {
                 nombre_box,
                 capacidad
             });
-            navigate('/');
+            navigate('/box');
         } catch (error) {
             console.error("Error al actualizar el box:", error);
         }
     };
+
+    const cancelar = () => {
+        navigate('/box'); 
+      };
 
     return (
         <div className="container mt-5">
@@ -71,9 +75,10 @@ const CompEditBox = () => {
                                         required
                                     />
                                 </div>
-                                <button type="submit" className="btn btn-primary">
-                                    Guardar
-                                </button>
+                                <div className="form-group text-center">
+                                <button type="submit" className="btn btn-primary mr-4 mx-4">Guardar</button>
+                                <button type="button" className="btn btn-danger" onClick={cancelar}>Cancelar</button>
+                                </div>
                             </form>
                         </div>
                     </div>
