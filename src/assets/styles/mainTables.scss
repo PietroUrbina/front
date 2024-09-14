@@ -1,0 +1,129 @@
+@import './variables'; // Asegúrate de que la ruta a las variables es correcta
+
+.container {
+  padding: 20px;
+  background-color: $light-color;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  width: 80%; // Define el ancho del contenedor para centrarlo
+  margin: 0 auto; // Centra el contenedor horizontalmente
+
+  .table-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: $spacing-unit;
+
+    .add-button {
+      background-color: $primary-color;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: $border-radius;
+      text-decoration: none;
+      cursor: pointer;
+
+      &:hover {
+        background-color: darken($primary-color, 10%);
+      }
+    }
+
+    .search-input {
+      padding: 10px;
+      border: 1px solid $table-border-color;
+      border-radius: $border-radius;
+      width: 300px;
+      outline: none;
+
+      &:focus {
+        border-color: $primary-color;
+      }
+    }
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0;
+
+    th, td {
+      padding: 12px 15px;
+      border: 1px solid $table-border-color;
+      text-align: left;
+    }
+
+    th {
+      background-color: #1E90FF; // Color azul para la cabecera
+      color: white;
+      font-size: $font-size-lg;
+    }
+
+    td {
+      color: $dark-color;
+      background-color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: $light-color;
+    }
+
+    tr:hover {
+      background-color: lighten(#1E90FF, 20%); // Sombra más clara para hover
+    }
+
+    .btn {
+      padding: 5px 10px;
+      border-radius: $border-radius;
+      cursor: pointer;
+      font-size: $font-size-base;
+      text-align: center;
+      display: inline-block;
+
+      &.btn-info {
+        background-color: #007BFF; // Color azul para el botón editar
+        color: white;
+      }
+
+      &.btn-danger {
+        background-color: $danger-color;
+        color: white;
+      }
+
+      &:hover {
+        filter: brightness(85%);
+      }
+    }
+  }
+  .pagination {
+    display: flex;
+    justify-content: center; // Centra los botones de paginación
+    margin-top: 20px; // Espacio después de la tabla
+    gap: 10px; // Espacio entre botones
+  
+    button {
+      padding: 8px 16px; // Tamaño adecuado para los botones
+      font-size: $font-size-base; // Utiliza el tamaño de fuente base de tus variables
+      background-color: $primary-color; // Color principal para el fondo
+      color: white; // Texto blanco para mejor contraste
+      border: none; // Sin borde
+      border-radius: $border-radius; // Radio de borde de tus variables
+      cursor: pointer; // Cursor en forma de mano para indicar clic
+  
+      &:hover {
+        background-color: darken($primary-color, 10%); // Oscurece el botón al pasar el mouse
+      }
+  
+      &:focus {
+        outline: none; // Remueve el contorno al hacer clic
+      }
+    }
+  }
+  .actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  } 
+
+  
+}
+  
