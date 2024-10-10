@@ -43,7 +43,7 @@ function Sidebar() {
           </li>
           <li>
             <Link to="/venta">
-              <i className="bx bx-dollar-circle"></i>
+              <i className="bx bx-cart-add"></i>
               {isOpen && <span>Generar venta</span>}
             </Link>
           </li>
@@ -54,9 +54,9 @@ function Sidebar() {
             </Link>
           </li>
           <li>
-            <Link to="/almacen">
+            <Link to="/inventarios">
               <i className="bx bxs-archive"></i>
-              {isOpen && <span>Almacén</span>}
+              {isOpen && <span>Inventario</span>}
             </Link>
           </li>
           <li>
@@ -75,6 +75,12 @@ function Sidebar() {
             <Link to="/box">
               <i className="bx bx-cube"></i>
               {isOpen && <span>Box</span>}
+            </Link>
+          </li>
+          <li>
+            <Link to="/empleados">
+              <i className="bx bxs-user"></i>
+              {isOpen && <span>Empleados</span>}
             </Link>
           </li>
           <li>

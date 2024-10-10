@@ -2,26 +2,31 @@ import axios from 'axios';
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-const URI = 'http://localhost:8000/productos/'; // Cambié 'usuarios' por 'productos'
+const URI = 'http://localhost:8000/productos/';
+const CATEGORIAS_URI = 'http://localhost:8000/categorias/'; // URI para obtener las categorías
 
 const CompEditProduct = () => {
     const [nombre, setNombre] = useState('');
+    const [descripcion, setDescripcion] = useState('');
+    const [id_categoria, setIdCategoria] = useState('');
     const [precio, setPrecio] = useState('');
-    const [stock, setStock] = useState('');
     const [fecha_vencimiento, setFechaVencimiento] = useState('');
+    const [imagen, setImagen] = useState('');
+    const [categorias, setCategorias] = useState([]); // Estado para las categorías
     const navigate = useNavigate();
     const { id } = useParams(); // Obtener el ID desde los parámetros de la URL
 
+    // Cargar los datos del producto por ID y cargar las categorías
     useEffect(() => {
-        // Obtener los datos del producto por ID
         const getProductById = async () => {
             try {
                 const res = await axios.get(`${URI}${id}`);
                 if (res.data) {
                     setNombre(res.data.nombre || '');
+                    setDescripcion(res.data.descripcion || '');
+                    setIdCategoria(res.data.id_categoria || '');
                     setPrecio(res.data.precio || '');
-                    setStock(res.data.stock || '');
-                    // Si hay fecha de vencimiento, formatear correctamente
+                    setImagen(res.data.imagen || '');
                     setFechaVencimiento(res.data.fecha_vencimiento ? res.data.fecha_vencimiento.split('T')[0] : '');
                 }
             } catch (error) {
@@ -29,19 +34,30 @@ const CompEditProduct = () => {
             }
         };
 
-        getProductById();
-    }, [id]); // Solo 'id' como dependencia
+        const getCategorias = async () => {
+            try {
+                const res = await axios.get(CATEGORIAS_URI);
+                setCategorias(res.data); // Suponiendo que la respuesta es un array de categorías
+            } catch (error) {
+                console.error('Error al cargar las categorías:', error);
+            }
+        };
 
-    // Procedimiento para actualizar
+        getProductById();
+        getCategorias();
+    }, [id]);
+
+    // Procedimiento para actualizar el Producto
     const actualizar = async (e) => {
         e.preventDefault();
         try {
             await axios.put(`${URI}${id}`, {
                 nombre,
+                descripcion,
+                id_categoria,
                 precio,
-                stock,
-                // Si no se especifica la fecha, enviar null al backend
-                fecha_vencimiento: fecha_vencimiento || null
+                fecha_vencimiento: fecha_vencimiento || null, // Envía null si no hay fecha
+                imagen
             });
             navigate('/productos');
         } catch (error) {
@@ -51,7 +67,7 @@ const CompEditProduct = () => {
 
     const cancelar = () => {
         navigate('/productos'); 
-      };
+    };
 
     return (
         <div className="container mt-5">
@@ -74,6 +90,31 @@ const CompEditProduct = () => {
                                     />
                                 </div>
                                 <div className="mb-3">
+                                    <label className="form-label">Descripción</label>
+                                    <textarea
+                                        value={descripcion}
+                                        onChange={(e) => setDescripcion(e.target.value)}
+                                        className="form-control"
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label className="form-label">Categoría</label>
+                                    <select
+                                        value={id_categoria}
+                                        onChange={(e) => setIdCategoria(e.target.value)}
+                                        className="form-control"
+                                        required
+                                    >
+                                        <option value="">Selecciona una categoría</option>
+                                        {categorias.map((categoria) => (
+                                            <option key={categoria.id} value={categoria.id}>
+                                                {categoria.nombre_categoria}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="mb-3">
                                     <label className="form-label">Precio</label>
                                     <input
                                         value={precio}
@@ -84,27 +125,27 @@ const CompEditProduct = () => {
                                     />
                                 </div>
                                 <div className="mb-3">
-                                    <label className="form-label">Stock</label>
-                                    <input
-                                        value={stock}
-                                        onChange={(e) => setStock(e.target.value)}
-                                        type="number"
-                                        className="form-control"
-                                        required
-                                    />
-                                </div>
-                                <div className="mb-3">
                                     <label className="form-label">Fecha de Vencimiento (Opcional)</label>
                                     <input
-                                        value={fecha_vencimiento ? fecha_vencimiento.split('T')[0] : ''}
+                                        value={fecha_vencimiento || ''}
                                         onChange={(e) => setFechaVencimiento(e.target.value)}
                                         type="date"
                                         className="form-control"
                                     />
                                 </div>
+                                <div className="mb-3">
+                                    <label className="form-label">URL de Imagen</label>
+                                    <input
+                                        value={imagen}
+                                        onChange={(e) => setImagen(e.target.value)}
+                                        type="text"
+                                        className="form-control"
+                                        required
+                                    />
+                                </div>
                                 <div className="form-group text-center">
-                                <button type="submit" className="btn btn-primary mr-4 mx-4">Guardar</button>
-                                <button type="button" className="btn btn-danger" onClick={cancelar}>Cancelar</button>
+                                    <button type="submit" className="btn btn-primary mr-4 mx-4">Guardar</button>
+                                    <button type="button" className="btn btn-danger" onClick={cancelar}>Cancelar</button>
                                 </div>
                             </form>
                         </div>

@@ -61,6 +61,7 @@ const CompShowBox = () => {
                     <tr>
                         <th>Nombre del Box</th>
                         <th>Capacidad</th>
+                        <th>Requisitos</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -69,6 +70,7 @@ const CompShowBox = () => {
                         <tr key={box.id}>
                             <td>{box.nombre_box}</td>
                             <td>{box.capacidad}</td>
+                            <td>{box.requisitos}</td>
                             <td>
                                 <Link to={`/box/edit/${box.id}`} className='btn btn-info'>
                                     <i className="fa-solid fa-pen-to-square"></i>

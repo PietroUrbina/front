@@ -8,11 +8,16 @@ const CompEditCustomers = () => {
     const [dni, setDni] = useState('');
     const [nombre, setNombre] = useState('');
     const [apellido, setApellido] = useState('');
+    const [direccion, setDireccion] = useState('');
     const [email, setEmail] = useState('');
     const [telefono, setTelefono] = useState('');
     const [fecha_nacimiento, setFecha_Nacimiento] = useState('');
+    const [sexo, setSexo] = useState(''); // Estado para el sexo
     const navigate = useNavigate();
     const { id } = useParams(); // Obtener el ID desde los parámetros de la URL
+
+    // sexos definidos en el modelo de la base de datos
+    const sexos = ['Masculino', 'Femenino', 'Otro'];
 
     useEffect(() => {
         // Definir la función dentro de useEffect para evitar dependencias innecesarias
@@ -23,9 +28,11 @@ const CompEditCustomers = () => {
                     setDni(res.data.dni || '');
                     setNombre(res.data.nombre || '');
                     setApellido(res.data.apellido || '');
-                    setFecha_Nacimiento(res.data.fecha_nacimiento || '');
+                    setDireccion(res.data.direccion || '');
                     setEmail(res.data.email || '');
                     setTelefono(res.data.telefono || '');
+                    setFecha_Nacimiento(res.data.fecha_nacimiento || '');
+                    setSexo(res.data.sexo || ''); // Cargar el valor de sexo
                 }
             } catch (error) {
                 console.error("Error al obtener los datos del Cliente:", error);
@@ -35,12 +42,12 @@ const CompEditCustomers = () => {
         getCustomerBlogId();
     }, [id]); // Solo 'id' como dependencia
 
-    //validacion de caractares en el campo te
+    //validacion de caracteres en el campo telefono
     const handleTelefonoChange = (e) => {
         if (e.target.value.length <= 9) {
           setTelefono(e.target.value);
         }
-      };
+    };
 
     // Procedimiento para actualizar
     const actualizar = async (e) => {
@@ -48,22 +55,28 @@ const CompEditCustomers = () => {
         if (telefono && telefono.length < 9) {
             alert('El teléfono debe tener hasta 9 dígitos.');
             return;
-          }
+        }
 
         try {
             await axios.put(`${URI}${id}`, {
-                fecha_nacimiento,
+                dni,
+                nombre,
+                apellido,
+                direccion,
                 email,
-                telefono
+                telefono,
+                fecha_nacimiento,
+                sexo  // Incluye el sexo en la actualización
             });
             navigate('/clientes');
         } catch (error) {
             console.error("Error al actualizar el Cliente:", error);
         }
-    }
+    };
+
     const cancelar = () => {
         navigate('/clientes'); // Redireccionar a la página de lista de clientes
-      };
+    };
 
     return (
         <div className="container mt-5">
@@ -103,6 +116,15 @@ const CompEditCustomers = () => {
                                     />
                                 </div>
                                 <div className="mb-3">
+                                    <label className="form-label">Direccion</label>
+                                    <input
+                                        value={direccion}
+                                        onChange={(e) => setDireccion(e.target.value)}
+                                        type="text"
+                                        className="form-control"
+                                    />
+                                </div>
+                                <div className="mb-3">
                                     <label className="form-label">Fecha de Nacimiento</label>
                                     <input
                                         value={fecha_nacimiento}
@@ -130,9 +152,25 @@ const CompEditCustomers = () => {
                                         className="form-control"
                                     />
                                 </div> 
+                                <div className="mb-3">
+                                    <label className="form-label">Sexo</label>
+                                    <select
+                                        value={sexo}
+                                        onChange={(e) => setSexo(e.target.value)}
+                                        className="form-select"
+                                        required
+                                    >
+                                        <option value="">Selecciona un sexo</option>
+                                        {sexos.map((sexoOption, index) => (
+                                            <option key={index} value={sexoOption}>
+                                                {sexoOption}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
                                 <div className="form-group text-center">
-                                <button type="submit" className="btn btn-primary mr-4 mx-4">Guardar</button>
-                                <button type="button" className="btn btn-danger" onClick={cancelar}>Cancelar</button>
+                                    <button type="submit" className="btn btn-primary mr-4 mx-4">Guardar</button>
+                                    <button type="button" className="btn btn-danger" onClick={cancelar}>Cancelar</button>
                                 </div>
                             </form>
                         </div>

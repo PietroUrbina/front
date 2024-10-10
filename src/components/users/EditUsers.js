@@ -3,33 +3,41 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 const URI = 'http://localhost:8000/usuarios/';
+const URI_EMPLEADOS = 'http://localhost:8000/empleados/'; // URI para obtener los empleados
 
 const CompEditUsers = () => {
     const [nombre_usuario, setNombre] = useState('');
     const [contrasena, setContrasena] = useState('');
-    const [rol, setRol] = useState('');
+    const [rol, setRol] = useState('');  // Estado para el rol del usuario
+    const [id_empleado, setIdEmpleado] = useState('');
+    const [empleados, setEmpleados] = useState([]); // Estado para almacenar los empleados
     const navigate = useNavigate();
     const { id } = useParams(); // Obtener el ID desde los parámetros de la URL
 
     // Definir los roles disponibles
-    const roles = ['administrador', 'cajero', 'mozo'];
+    const roles = ['Administrador', 'Cajero', 'Mozo'];
 
     useEffect(() => {
-        // Definir la función dentro de useEffect para evitar dependencias innecesarias
-        const getUserBlogId = async () => {
+        const getUserAndEmpleados = async () => {
             try {
-                const res = await axios.get(`${URI}${id}`);
-                if (res.data) {
-                    setNombre(res.data.nombre_usuario || '');
-                    setContrasena(res.data.contrasena || '');
-                    setRol(res.data.rol || '');
+                // Obtener el usuario por ID
+                const userRes = await axios.get(`${URI}${id}`);
+                if (userRes.data) {
+                    setNombre(userRes.data.nombre_usuario || '');
+                    setContrasena(userRes.data.contrasena || '');
+                    setRol(userRes.data.rol || ''); // Cargar el rol preseleccionado
+                    setIdEmpleado(userRes.data.id_empleado || ''); // Cargar el empleado preseleccionado
                 }
+
+                // Obtener la lista de empleados
+                const empleadosRes = await axios.get(URI_EMPLEADOS);
+                setEmpleados(empleadosRes.data);
             } catch (error) {
-                console.error("Error al obtener los datos del usuario:", error);
+                console.error("Error al obtener los datos:", error);
             }
         };
 
-        getUserBlogId();
+        getUserAndEmpleados();
     }, [id]); // Solo 'id' como dependencia
 
     // Procedimiento para actualizar
@@ -39,7 +47,8 @@ const CompEditUsers = () => {
             await axios.put(`${URI}${id}`, {
                 nombre_usuario,
                 contrasena,
-                rol
+                rol,
+                id_empleado
             });
             navigate('/usuarios');
         } catch (error) {
@@ -48,8 +57,8 @@ const CompEditUsers = () => {
     };
 
     const cancelar = () => {
-        navigate('/usuarios'); // Redireccionar a la página de lista de clientes
-      };
+        navigate('/usuarios'); // Redireccionar a la página de lista de usuarios
+    };
 
     return (
         <div className="container mt-5">
@@ -76,7 +85,7 @@ const CompEditUsers = () => {
                                     <input
                                         value={contrasena}
                                         onChange={(e) => setContrasena(e.target.value)}
-                                        type="text"
+                                        type="password"
                                         className="form-control"
                                         required
                                     />
@@ -84,7 +93,7 @@ const CompEditUsers = () => {
                                 <div className="mb-3">
                                     <label className="form-label">Rol</label>
                                     <select
-                                        value={rol}
+                                        value={rol}  // Asegúrate de que el valor esté preseleccionado correctamente
                                         onChange={(e) => setRol(e.target.value)}
                                         className="form-select"
                                         required
@@ -92,14 +101,30 @@ const CompEditUsers = () => {
                                         <option value="">Selecciona un rol</option>
                                         {roles.map((role, index) => (
                                             <option key={index} value={role}>
-                                                {role.charAt(0).toUpperCase() + role.slice(1)}
+                                                {role.charAt(0).toUpperCase() + role.slice(1)} {/* Mostrar con la primera letra en mayúscula */}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="mb-3">
+                                    <label className="form-label">Empleado</label>
+                                    <select
+                                        value={id_empleado}
+                                        onChange={(e) => setIdEmpleado(e.target.value)}
+                                        className="form-select"
+                                        required
+                                    >
+                                        <option value="">Selecciona un empleado</option>
+                                        {empleados.map((empleado) => (
+                                            <option key={empleado.id} value={empleado.id}> {/* Usamos 'id' en lugar de 'id_empleado' */}
+                                                {empleado.nombre_empleado}
                                             </option>
                                         ))}
                                     </select>
                                 </div>
                                 <div className="form-group text-center">
-                                <button type="submit" className="btn btn-primary mr-4 mx-4">Guardar</button>
-                                <button type="button" className="btn btn-danger" onClick={cancelar}>Cancelar</button>
+                                    <button type="submit" className="btn btn-primary mr-4 mx-4">Guardar</button>
+                                    <button type="button" className="btn btn-danger" onClick={cancelar}>Cancelar</button>
                                 </div>
                             </form>
                         </div>

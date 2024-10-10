@@ -61,29 +61,40 @@ const CompShowProducts = () => {
                 <thead>
                     <tr>
                         <th>Nombre</th>
+                        <th>Descripcion</th>
+                        <th>Categoria</th>
                         <th>Precio</th>
-                        <th>Stock</th>
                         <th>Fecha de Vencimiento</th>
+                        <th>Imagen</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {currentProducts.map((producto) => (
-                        <tr key={producto.id}>
-                            <td>{producto.nombre}</td>
-                            <td>{producto.precio}</td>
-                            <td>{producto.stock}</td>
-                            <td>{producto.fecha_vencimiento}</td>
-                            <td>
-                                <Link to={`/productos/edit/${producto.id}`} className='btn btn-info'>
-                                    <i className="fa-solid fa-pen-to-square"></i>
-                                </Link>
-                                <button onClick={() => deleteProducto(producto.id)} className='btn btn-danger'>
-                                    <i className="fa-solid fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
+                {currentProducts.map(producto => (
+                    <tr key={producto.id}>
+                        <td>{producto.nombre}</td>
+                        <td>{producto.descripcion}</td>
+                        <td>{producto.categoria ? producto.categoria.nombre_categoria : 'Sin Categoría'}</td>
+                        <td>{producto.precio}</td>
+                        <td>{producto.fecha_vencimiento}</td>
+                        <td>
+                            <img 
+                                src={producto.imagen} 
+                                alt={producto.nombre} 
+                                style={{ width: '100px', height: 'auto' }}
+                            />
+                           
+                        </td>
+                        <td>
+                            <Link to={`/productos/edit/${producto.id}`} className='btn btn-info'>
+                                <i className="fa-solid fa-pen-to-square"></i>
+                            </Link>
+                            <button onClick={() => deleteProducto(producto.id)} className='btn btn-danger'>
+                                <i className="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                ))}
                 </tbody>
             </table>
             <div className="pagination">

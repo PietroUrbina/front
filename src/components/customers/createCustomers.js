@@ -9,12 +9,17 @@ const CompCreateCustomers = () => {
   const [dni, setDni] = useState('');
   const [nombre, setNombre] = useState('');
   const [apellido, setApellido] = useState('');
+  const [direccion, setDireccion] = useState('');
   const [email, setEmail] = useState('');
   const [telefono, setTelefono] = useState('');
   const [fecha_nacimiento, setFechaNacimiento] = useState('');
+  const [sexo, setSexo] = useState('');
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [isReadOnly, setIsReadOnly] = useState(false);
   const navigate = useNavigate();
+
+  // sexos definidos en el modelo de la base de datos
+  const sexos = ['Masculino', 'Femenino', 'Otro'];
 
   const obtenerDatosReniec = async () => {
     try {
@@ -37,7 +42,7 @@ const CompCreateCustomers = () => {
       setDni(e.target.value);
     }
   };
-  
+
   const handleTelefonoChange = (e) => {
     if (e.target.value.length <= 9) {
       setTelefono(e.target.value);
@@ -45,7 +50,6 @@ const CompCreateCustomers = () => {
   };
 
   const guardar = async (e) => {
-    e.preventDefault();
     e.preventDefault();
     // Añadir validación antes de enviar
     if (dni.length !== 8) {
@@ -58,12 +62,13 @@ const CompCreateCustomers = () => {
     }
 
     try {
-      await axios.post(URI, { dni, nombre, apellido, email, telefono, fecha_nacimiento });
+      await axios.post(URI, { dni, nombre, apellido, direccion, email, telefono, fecha_nacimiento, sexo });
       navigate('/clientes');
     } catch (error) {
       console.error('Error al crear cliente', error);
     }
   };
+
   // Función para manejar el evento de cancelación
   const cancelar = () => {
     navigate('/clientes'); // Redirige al usuario a la lista de clientes
@@ -121,11 +126,11 @@ const CompCreateCustomers = () => {
                   />
                 </div>
                 <div className="mb-3">
-                  <label className="form-label">Fecha de Nacimiento</label>
+                  <label className="form-label">Direccion</label>
                   <input
-                    value={fecha_nacimiento}
-                    onChange={(e) => setFechaNacimiento(e.target.value)}
-                    type="date"
+                    value={direccion}
+                    onChange={(e) => setDireccion(e.target.value)}
+                    type="text"
                     className="form-control"
                     required
                   />
@@ -150,6 +155,32 @@ const CompCreateCustomers = () => {
                     className="form-control"
                     required
                   />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Fecha de Nacimiento</label>
+                  <input
+                    value={fecha_nacimiento}
+                    onChange={(e) => setFechaNacimiento(e.target.value)}
+                    type="date"
+                    className="form-control"
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Sexo</label>
+                  <select
+                    value={sexo}
+                    onChange={(e) => setSexo(e.target.value)}
+                    className="form-select"
+                    required
+                  >
+                    <option value="">Selecciona un sexo</option>
+                    {sexos.map((sexoOption, index) => (
+                      <option key={index} value={sexoOption}>
+                        {sexoOption}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="form-group text-center">
                   <button type="submit" className="btn btn-primary mr-4 mx-4">Guardar</button>

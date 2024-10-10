@@ -7,6 +7,7 @@ const URI = 'http://localhost:8000/box/';
 const CompEditBox = () => {
     const [nombre_box, setNombreBox] = useState('');
     const [capacidad, setCapacidad] = useState('');
+    const [requisitos, setRequisitos] = useState('');
     const navigate = useNavigate();
     const { id } = useParams(); // Obtener el ID desde los parámetros de la URL
 
@@ -18,6 +19,7 @@ const CompEditBox = () => {
                 if (res.data) {
                     setNombreBox(res.data.nombre_box || '');
                     setCapacidad(res.data.capacidad || '');
+                    setRequisitos(res.data.requisitos || '');
                 }
             } catch (error) {
                 console.error("Error al obtener los datos del box:", error);
@@ -33,7 +35,8 @@ const CompEditBox = () => {
         try {
             await axios.put(`${URI}${id}`, {
                 nombre_box,
-                capacidad
+                capacidad,
+                requisitos
             });
             navigate('/box');
         } catch (error) {
@@ -71,6 +74,16 @@ const CompEditBox = () => {
                                         value={capacidad}
                                         onChange={(e) => setCapacidad(e.target.value)}
                                         type="number"
+                                        className="form-control"
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label className="form-label">Requisitos</label>
+                                    <input
+                                        value={requisitos}
+                                        onChange={(e) => setRequisitos(e.target.value)}
+                                        type="text"
                                         className="form-control"
                                         required
                                     />

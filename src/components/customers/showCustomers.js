@@ -6,7 +6,7 @@ import '../../assets/styles/mainTables.scss'; // Asegúrate de que esta ruta es 
 const URI = 'http://localhost:8000/clientes/';
 
 const CompShowCustomers = () => {
-    const [clientes, setClientes] = useState([]);
+    const [clientes, setClientes] = useState([]); // Inicializar como array vacío
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [customersPerPage] = useState(10); // Clientes por página
@@ -16,13 +16,28 @@ const CompShowCustomers = () => {
     }, []);
 
     const getClientes = async () => {
-        const res = await axios.get(URI);
-        setClientes(res.data);
+        try {
+            const res = await axios.get(URI);
+            // Verifica que res.data sea un array
+            if (Array.isArray(res.data)) {
+                setClientes(res.data);
+            } else {
+                setClientes([]); // En caso de que la respuesta no sea un array, asegurarse de que sea un array vacío
+                console.error("La respuesta no es un array", res.data);
+            }
+        } catch (error) {
+            console.error("Error al obtener los clientes", error);
+            setClientes([]); // Maneja el error asignando un array vacío
+        }
     };
 
     const deleteCliente = async (id) => {
-        await axios.delete(`${URI}${id}`);
-        getClientes();
+        try {
+            await axios.delete(`${URI}${id}`);
+            getClientes(); // Refresca la lista de clientes
+        } catch (error) {
+            console.error("Error al eliminar el cliente", error);
+        }
     };
 
     const handleSearch = (e) => {
@@ -64,9 +79,11 @@ const CompShowCustomers = () => {
                         <th>DNI</th>
                         <th>Nombres</th>
                         <th>Apellidos</th>
-                        <th>Fecha de Nacimiento</th>
+                        <th>Direccion</th>
                         <th>Email</th>
                         <th>Teléfono</th>
+                        <th>Fecha de Nacimiento</th>
+                        <th>Sexo</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -76,9 +93,11 @@ const CompShowCustomers = () => {
                             <td>{cliente.dni}</td>
                             <td>{cliente.nombre}</td>
                             <td>{cliente.apellido}</td>
-                            <td>{cliente.fecha_nacimiento}</td>
+                            <td>{cliente.direccion}</td>
                             <td>{cliente.email}</td>
                             <td>{cliente.telefono}</td>
+                            <td>{cliente.fecha_nacimiento}</td>
+                            <td>{cliente.sexo}</td>
                             <td>
                                 <Link to={`/clientes/edit/${cliente.id}`} className='btn btn-info'><i className="fa-solid fa-pen-to-square"></i></Link>
                                 <button onClick={() => deleteCliente(cliente.id)} className='btn btn-danger'><i className="fa-solid fa-trash"></i></button>
