@@ -1,11 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './App.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+// Importamos nuestros componentes principales
+import Login from './Home/login/Login';
+import Logout from './Home/login/Logout';
+
+// import NavSidebar from './Home/NavSideBar/Sidebar';
+
 
 // Importamos los componentes de las tablas
-import CompShowUsers from './components/users/showUsers';
+import CompShowUsers from './components/users/ShowUsers';
 import CompCreateUsers from './components/users/createUsers';
-import CompEditUsers from './components/users/editUsers';
+import CompEditUsers from './components/users/EditUsers';
 
 import CompShowEmployees from './components/employees/showEmployees';
 import CompCreateEmployees from './components/employees/createEmployees';
@@ -13,7 +22,7 @@ import CompEditEmployees from './components/employees/editEmployees';
 
 import CompShowBox from './components/box/showBox';
 import CompCreateBox from './components/box/createBox';
-import CompEditBox from "./components/box/editBox";
+import CompEditBox from './components/box/editBox';
 
 import CompShowProducts from './components/products/showProducts';
 import CompCreateProducts from './components/products/createProducts';
@@ -24,56 +33,57 @@ import CompCreateCustomers from './components/customers/createCustomers';
 import CompEditCustomers from './components/customers/editCustomers';
 
 import CompShowInventories from './components/inventory/showInventories';
-
-import Dashboard from './components/dasboards/repostesDashboard';
-import Sidebar from './components/Home/Sidebar';
+import CompCreateInventories from './components/inventory/createInventory'
+import CompEditInventories from './components/inventory/editInventory'
 
 function App() {
-
-  const [isCollapsed] = useState(true);
-
   return (
     <div className="App">
       <BrowserRouter>
-        {/* Sidebar que puede colapsarse */}
-        <Sidebar isCollapsed={isCollapsed} />
+        <Routes>
+          {/* Redirigir desde la raíz "/" hacia "/login" */}
+          <Route path="/" element={<Navigate to="/login" />} />
 
-        {/* Definir las rutas para cada tabla */}
-        <div className={`main-content ${isCollapsed ? 'collapsed' : ''}`}>
-          <Routes>
-            {/* Ruta para el Dashboard en Inicio */}
-            <Route path="/Home" element={<Dashboard />} />
+          {/* Ruta para el Login */}
+          <Route path="/login" element={ <Login /> } />
 
-            {/* Rutas para Usuarios */}
-            <Route path='/usuarios' element={<CompShowUsers />} />
-            <Route path='/usuarios/create' element={<CompCreateUsers />} />
-            <Route path='/usuarios/edit/:id' element={<CompEditUsers />} />
+          {/* Ruta para Dashboard*/}
+      
 
-            {/* Rutas para Empleados */}
-            <Route path='/empleados' element={<CompShowEmployees />} />
-            <Route path='/empleados/create' element={<CompCreateEmployees />} />
-            <Route path='/empleados/edit/:id' element={<CompEditEmployees />} />
+          {/* Rutas para Usuarios */}
+          <Route path="/usuarios" element={ <CompShowUsers /> }/>
+          <Route path="/usuarios/create" element={ <CompCreateUsers /> }/>
+          <Route path="/usuarios/edit/:id" element={ <CompEditUsers /> }/>
 
-            {/* Rutas para Box */}
-            <Route path='/box' element={<CompShowBox />} />
-            <Route path='/box/create' element={<CompCreateBox />} />
-            <Route path='/box/edit/:id' element={<CompEditBox />} />
+          {/* Rutas para Empleados */}
+          <Route path="/empleados" element={ <CompShowEmployees /> }/>
+          <Route path="/empleados/create" element={ <CompCreateEmployees /> }/>
+          <Route path="/empleados/edit/:id" element={ <CompEditEmployees /> }/>
 
-            {/* Rutas para Productos */}
-            <Route path='/productos' element={<CompShowProducts />} />
-            <Route path='/productos/create' element={<CompCreateProducts />} />
-            <Route path='/productos/edit/:id' element={<CompEditProducts />} />
+          {/* Rutas para Box */}
+          <Route path="/box" element={ <CompShowBox /> }/>
+          <Route path="/box/create" element={ <CompCreateBox /> }/>
+          <Route path="/box/edit/:id" element={ <CompEditBox/> }/>
 
-            {/* Rutas para Clientes */}
-            <Route path='/clientes' element={<CompShowCustomers />} />
-            <Route path='/clientes/create' element={<CompCreateCustomers />} />
-            <Route path='/clientes/edit/:id' element={<CompEditCustomers />} />
+          {/* Rutas para Productos */}
+          <Route path="/productos" element={<CompShowProducts />}/>
+          <Route path="/productos/create" element={ <CompCreateProducts /> }/>
+          <Route path="/productos/edit/:id" element={ <CompEditProducts /> }/>
 
-            {/* Rutas para Inventarios */}
-            <Route path='/inventarios' element={<CompShowInventories />} />
+          {/* Rutas para Clientes */}
+          <Route path="/clientes" element={ <CompShowCustomers /> }/>
+          <Route path="/clientes/create" element={ <CompCreateCustomers /> }/>
+          <Route path="/clientes/edit/:id" element={ <CompEditCustomers /> }/>
 
-          </Routes>
-        </div>
+          {/* Rutas para Inventarios */}
+          <Route path="/inventarios" element={ <CompShowInventories /> }/>
+          <Route path="/inventarios/create" element={ <CompCreateInventories /> }/>
+          <Route path="/inventarios/edit/:id" element={ <CompEditInventories /> }/>
+
+          {/* Ruta para Logout */}
+          <Route path="/logout" element={<Logout />} />
+        </Routes>
+        <ToastContainer />
       </BrowserRouter>
     </div>
   );

@@ -5,8 +5,9 @@
   background-color: $light-color;
   border-radius: $border-radius;
   box-shadow: $box-shadow;
-  width: 80%; // Define el ancho del contenedor para centrarlo
+  width: 90%; // Aumenté el ancho para darle más espacio a la tabla
   margin: 0 auto; // Centra el contenedor horizontalmente
+  overflow-x: auto; // Permite hacer scroll horizontal si la tabla es más grande que el contenedor
 
   .table-header {
     display: flex;
@@ -21,9 +22,17 @@
       border-radius: $border-radius;
       text-decoration: none;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      font-weight: bold;
+      font-size: $font-size-base;
 
       &:hover {
         background-color: darken($primary-color, 10%);
+      }
+
+      i {
+        margin-right: 5px; // Icono de botón
       }
     }
 
@@ -33,6 +42,7 @@
       border-radius: $border-radius;
       width: 300px;
       outline: none;
+      font-size: $font-size-base;
 
       &:focus {
         border-color: $primary-color;
@@ -44,22 +54,27 @@
     width: 100%;
     border-collapse: collapse;
     margin-top: 0;
+    font-size: $font-size-md;
 
     th, td {
       padding: 12px 15px;
       border: 1px solid $table-border-color;
       text-align: left;
+      white-space: nowrap; // Evita que el contenido de las celdas se desborde
     }
 
     th {
-      background-color: #1E90FF; // Color azul para la cabecera
+      background-color: $primary-color; // Color azul para la cabecera
       color: white;
       font-size: $font-size-lg;
+      text-align: center;
+      border-bottom: 2px solid darken($primary-color, 10%);
     }
 
     td {
       color: $dark-color;
       background-color: white;
+      text-align: center;
     }
 
     tr:nth-child(even) {
@@ -67,7 +82,7 @@
     }
 
     tr:hover {
-      background-color: lighten(#1E90FF, 20%); // Sombra más clara para hover
+      background-color: lighten($primary-color, 20%); // Sombra más clara para hover
     }
 
     .btn {
@@ -93,6 +108,23 @@
       }
     }
   }
+
+  .estado {
+    padding: 5px 10px;
+    border-radius: $border-radius;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+
+    &.activo {
+      background-color: #28a745; // Verde para activo
+    }
+
+    &.inactivo {
+      background-color: #dc3545; // Rojo para inactivo
+    }
+  }
+
   .pagination {
     display: flex;
     justify-content: center; // Centra los botones de paginación
@@ -115,8 +147,13 @@
       &:focus {
         outline: none; // Remueve el contorno al hacer clic
       }
+
+      &.active {
+        background-color: darken($primary-color, 20%); // Botón activo más oscuro
+      }
     }
   }
+
   .actions {
     display: flex;
     justify-content: center;
@@ -124,6 +161,27 @@
     margin-top: 20px;
   } 
 
-  
+  // Definir el estilo de los "chips" para stock y estado
+.chip {
+  display: inline-block;
+  padding: 5px 12px;
+  font-size: $font-size-sm;
+  font-weight: bold;
+  border-radius: 30px; // Bordes redondeados
+  color: white; // Texto blanco para contraste
+  text-align: center;
+  white-space: nowrap; // Evita que el texto se rompa
+
+  &.stock {
+    &.high { background-color: #28a745; }  // Verde para stock alto
+    &.medium { background-color: #ffc107; }  // Amarillo para stock medio
+    &.low { background-color: #dc3545; }  // Rojo para stock bajo
+  }
+
+  &.estado {
+    &.activo { background-color: #28a745; }  // Verde para activo
+    &.inactivo { background-color: #dc3545; }  // Rojo para inactivo
+  }
 }
-  
+
+}

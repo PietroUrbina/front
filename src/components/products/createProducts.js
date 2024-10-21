@@ -9,7 +9,7 @@ const CompCreateProducts = () => {
   const [nombre, setNombre] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [id_categoria, setIdCategoria] = useState('');
-  const [precio, setPrecio] = useState('');
+  const [costo, setCosto] = useState('');
   const [fecha_vencimiento, setFechaVencimiento] = useState(null);
   const [imagen, setImagen] = useState('');
   const [categorias, setCategorias] = useState([]); // Estado para las categorías
@@ -37,7 +37,7 @@ const CompCreateProducts = () => {
       nombre,
       descripcion,
       id_categoria, // Asegúrate de que el id_categoria se envía correctamente
-      precio,
+      costo,
       fecha_vencimiento: fecha_vencimiento ? fecha_vencimiento : null,
       imagen
     };
@@ -100,10 +100,10 @@ const CompCreateProducts = () => {
                   </select>
                 </div>
                 <div className="mb-3">
-                  <label className="form-label">Precio</label>
+                  <label className="form-label">Costo</label>
                   <input
-                    value={precio}
-                    onChange={(e) => setPrecio(e.target.value)}
+                    value={costo}
+                    onChange={(e) => setCosto(e.target.value)}
                     type="number"
                     className="form-control"
                     required

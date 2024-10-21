@@ -63,7 +63,7 @@ const CompShowProducts = () => {
                         <th>Nombre</th>
                         <th>Descripcion</th>
                         <th>Categoria</th>
-                        <th>Precio</th>
+                        <th>Costo</th>
                         <th>Fecha de Vencimiento</th>
                         <th>Imagen</th>
                         <th>Acciones</th>
@@ -75,7 +75,7 @@ const CompShowProducts = () => {
                         <td>{producto.nombre}</td>
                         <td>{producto.descripcion}</td>
                         <td>{producto.categoria ? producto.categoria.nombre_categoria : 'Sin Categoría'}</td>
-                        <td>{producto.precio}</td>
+                        <td>{producto.costo}</td>
                         <td>{producto.fecha_vencimiento}</td>
                         <td>
                             <img 
