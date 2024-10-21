@@ -1,0 +1,116 @@
+/* Imagen de fondo */
+.login-container {
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Caja del formulario de login */
+.login-box {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  text-align: center;
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Cambiar la fuente y el estilo del título */
+h2 {
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  margin-bottom: 50px; /* Aumenta la separación entre el título y el campo de usuario */
+  font-size: 2.5rem;
+}
+
+/* Mejorar las cajas de texto */
+.input-container {
+  margin-bottom: 30px;
+}
+
+.input-container label {
+  color: #fff;
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* Estilo para cajas de texto invisibles con una línea blanca */
+.input-container input {
+  width: 100%;
+  padding: 10px 0;
+  border: none;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.7);
+  background-color: transparent;
+  color: #fff;
+  transition: border-color 0.3s ease;
+}
+
+/* Efecto al hacer foco */
+.input-container input:focus {
+  outline: none;
+  border-bottom: 2px solid #fff;
+}
+
+/* Tarjeta emergente para mostrar mensajes de error */
+.error-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: rgba(255, 0, 0, 0.8);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.error-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Modificar el botón de login */
+.login-button {
+  background-color: #fff;
+  border: none;
+  color: #333;
+  padding: 15px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+/* Efecto hover en el botón */
+.login-button:hover {
+  background-color: #f0f0f0;
+  color: #000;
+}
+
+/* Estilo para recuperacion de contraseña */
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.forgot-password {
+  color: #fff;
+  text-decoration: none;
+}
