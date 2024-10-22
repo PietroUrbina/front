@@ -39,7 +39,7 @@ h2 {
 }
 
 .input-container label {
-  color: #fff;
+  color: #ffffff;
   display: block;
   margin-bottom: 10px;
 }
@@ -51,7 +51,7 @@ h2 {
   border: none;
   border-bottom: 2px solid rgba(255, 255, 255, 0.7);
   background-color: transparent;
-  color: #fff;
+  color: #030303;
   transition: border-color 0.3s ease;
 }
 
@@ -113,4 +113,20 @@ h2 {
 .forgot-password {
   color: #fff;
   text-decoration: none;
+}
+.password-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.password-container input {
+  width: 100%;
+  padding-right: 40px; /* Espacio para el ícono */
+}
+
+.password-toggle {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
 }

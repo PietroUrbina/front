@@ -3,10 +3,13 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import backgroundImage from '../../assets/fondo.jpg';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Importar FontAwesome
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'; // Íconos de ojo
 
 const Login = () => {
   const [nombreUsuario, setNombreUsuario] = useState('');
   const [contrasena, setContrasena] = useState('');
+  const [showPassword, setShowPassword] = useState(false); // Estado para mostrar/ocultar contraseña
   const [error, setError] = useState('');
   const [showToast, setShowToast] = useState(false); // Estado para mostrar la tarjeta de error
   const navigate = useNavigate();
@@ -34,7 +37,7 @@ const Login = () => {
     }
   };
 
-  // Función para mostrar la tarjeta de error durante 2 segundos
+  // Función para mostrar la tarjeta de error durante 3 segundos
   const showErrorToast = (message) => {
     setError(message);
     setShowToast(true);
@@ -43,9 +46,14 @@ const Login = () => {
     }, 3000); // Desaparece después de 3 segundos
   };
 
+  // Función para alternar la visibilidad de la contraseña
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <div className="login-container"
-    style={{ backgroundImage: `url(${backgroundImage})` }}>
+      style={{ backgroundImage: `url(${backgroundImage})` }}>
       <div className="login-box">
         <h2>Inicio de Sesion</h2>
         <form onSubmit={handleLogin}>
@@ -60,15 +68,20 @@ const Login = () => {
           </div>
           <div className="input-container">
             <label>Contraseña</label>
-            <input
-              type="password"
-              value={contrasena}
-              onChange={(e) => setContrasena(e.target.value)}
-              required
-            />
+            <div className="password-container">
+              <input
+                type={showPassword ? 'text' : 'password'} // Mostrar u ocultar contraseña
+                value={contrasena}
+                onChange={(e) => setContrasena(e.target.value)}
+                required
+              />
+              <span className="password-toggle" onClick={togglePasswordVisibility}>
+                <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} /> {/* Ícono de ojo */}
+              </span>
+            </div>
           </div>
           <div className="actions">
-            <a href="./RecuperarContraseña.js" className="forgot-password">Olvidaste tu contraseña?</a>
+            {/* <a href="#" className="forgot-password">Olvidaste tu contraseña?</a> */}
           </div>
           <button type="submit" className="login-button">Ingresar</button>
         </form>

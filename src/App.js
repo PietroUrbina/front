@@ -14,7 +14,6 @@ import Logout from './Home/login/Logout';
 // Importamos los componentes de las tablas
 import CompShowUsers from './components/users/ShowUsers';
 import CompCreateUsers from './components/users/createUsers';
-import CompEditUsers from './components/users/EditUsers';
 
 import CompShowEmployees from './components/employees/showEmployees';
 import CompCreateEmployees from './components/employees/createEmployees';
@@ -53,7 +52,6 @@ function App() {
           {/* Rutas para Usuarios */}
           <Route path="/usuarios" element={ <CompShowUsers /> }/>
           <Route path="/usuarios/create" element={ <CompCreateUsers /> }/>
-          <Route path="/usuarios/edit/:id" element={ <CompEditUsers /> }/>
 
           {/* Rutas para Empleados */}
           <Route path="/empleados" element={ <CompShowEmployees /> }/>
