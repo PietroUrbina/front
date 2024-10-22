@@ -1,22 +1,37 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Select from 'react-select'; // Importar react-select
+import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Íconos de ojo
+import { toast } from 'react-toastify';  // Importar toast para notificaciones
+import 'react-toastify/dist/ReactToastify.css'; // Importar estilos de toastify
 
 const URI = 'http://localhost:8000/usuarios/';
-const URI_EMPLEADOS = 'http://localhost:8000/empleados/'; // URI para obtener los empleados
+const URI_EMPLEADOS = 'http://localhost:8000/empleados/';
 
 const CompCreateUser = () => {
   const [nombre_usuario, setNombreUsuario] = useState('');
   const [contrasena, setContrasena] = useState('');
+  const [repiteContrasena, setRepiteContrasena] = useState('');
   const [rol, setRol] = useState('');
-  const [id_empleado, setIdEmpleado] = useState('');  // El valor correcto que es el ID del empleado
-  const [empleados, setEmpleados] = useState([]); // Estado para almacenar los empleados
+  const [id_empleado, setIdEmpleado] = useState('');
+  const [empleados, setEmpleados] = useState([]);
+  const [error, setError] = useState({
+    nombre_usuario: '',
+    contrasena: '',
+    repiteContrasena: '',
+    nombreExistente: ''
+  });
+  const [mostrarContrasena, setMostrarContrasena] = useState(false);
+  const [mostrarRepiteContrasena, setMostrarRepiteContrasena] = useState(false);
   const navigate = useNavigate();
 
-  // Roles definidos en el modelo de la base de datos
-  const roles = ['administrador', 'cajero', 'mozo'];
+  const roles = [
+    { value: 'Administrador', label: 'Administrador' },
+    { value: 'Cajero', label: 'Cajero' },
+    { value: 'Mozo', label: 'Mozo' }
+  ];
 
-  // Obtener los empleados al cargar el componente
   useEffect(() => {
     getEmpleados();
   }, []);
@@ -24,36 +39,65 @@ const CompCreateUser = () => {
   const getEmpleados = async () => {
     try {
       const res = await axios.get(URI_EMPLEADOS);
-      setEmpleados(res.data); // Asumimos que res.data es un array de empleados
+      const empleadosOptions = res.data.map(empleado => ({
+        value: empleado.id,
+        label: empleado.nombre_empleado
+      }));
+      setEmpleados(empleadosOptions);
     } catch (error) {
       console.error('Error al obtener los empleados:', error);
     }
   };
 
-  // Procedimiento para guardar el nuevo usuario
-  const guardar = async (e) => {
-    e.preventDefault();
-
-    // Verifica que los datos sean correctos antes de enviarlos
-    console.log({
-      nombre_usuario,
-      contrasena,
-      rol,
-      id_empleado  // Aquí debería ser el ID del empleado, no su nombre
-    });
-
+  const checkNombreUsuario = async (nombre_usuario) => {
     try {
-      await axios.post(URI, { nombre_usuario, contrasena, rol, id_empleado });
-      navigate('/usuarios');
+      const res = await axios.post(`${URI}check-usuario`, { nombre_usuario });
+      if (res.status === 200) {
+        setError((prev) => ({ ...prev, nombre_usuario: '' }));
+      }
     } catch (error) {
-      console.error('Error al crear el usuario:', error);
+      if (error.response && error.response.status === 400) {
+        setError((prev) => ({ ...prev, nombre_usuario: error.response.data.message }));
+      } else {
+        console.error('Error al verificar el nombre de usuario:', error);
+      }
     }
   };
 
-  // Función para manejar el evento de cancelación
-  const cancelar = () => {
-    navigate('/usuarios'); 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validaciones
+    if (nombre_usuario.length < 8) {
+      setError(prev => ({ ...prev, nombre_usuario: 'El nombre de usuario debe tener al menos 8 caracteres.' }));
+      return;
+    }
+
+    if (contrasena.length < 10) {
+      setError(prev => ({ ...prev, contrasena: 'La contraseña debe tener al menos 10 caracteres.' }));
+      return;
+    }
+
+    if (contrasena !== repiteContrasena) {
+      setError(prev => ({ ...prev, repiteContrasena: 'Las contraseñas no coinciden.' }));
+      return;
+    }
+
+    try {
+      const res = await axios.post(URI, { nombre_usuario, contrasena, rol, id_empleado });
+      console.log('Usuario creado con éxito:', res.data);
+      toast.success('Usuario creado con éxito');
+      navigate('/usuarios');
+    } catch (error) {
+      console.error('Error al crear el usuario:', error.response || error);
+    }
   };
+
+  useEffect(() => {
+    if (nombre_usuario.length >= 4) {
+      checkNombreUsuario(nombre_usuario);
+    }
+  }, [nombre_usuario]);
 
   return (
     <div className="container mt-5">
@@ -64,62 +108,97 @@ const CompCreateUser = () => {
               <h3>Crear un Nuevo Usuario</h3>
             </div>
             <div className="card-body">
-              <form onSubmit={guardar}>
+              <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <label className="form-label">Nombre de Usuario</label>
                   <input
                     value={nombre_usuario}
                     onChange={(e) => setNombreUsuario(e.target.value)}
                     type="text"
-                    className="form-control"
+                    className={`form-control ${error.nombre_usuario ? 'is-invalid' : ''}`}
                     required
                   />
+                  {error.nombre_usuario && (
+                    <div className="invalid-feedback">
+                      {error.nombre_usuario}
+                    </div>
+                  )}
                 </div>
                 <div className="mb-3">
                   <label className="form-label">Contraseña</label>
-                  <input
-                    value={contrasena}
-                    onChange={(e) => setContrasena(e.target.value)}
-                    type="password"
-                    className="form-control"
+                  <div className="input-group">
+                    <input
+                      value={contrasena}
+                      onChange={(e) => setContrasena(e.target.value)}
+                      type={mostrarContrasena ? "text" : "password"}
+                      className={`form-control ${error.contrasena ? 'is-invalid' : ''}`}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary"
+                      onClick={() => setMostrarContrasena(!mostrarContrasena)}
+                    >
+                      {mostrarContrasena ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                  </div>
+                  {error.contrasena && (
+                    <div className="invalid-feedback d-block"> {/* Aseguramos que el mensaje se muestre */}
+                      {error.contrasena}
+                    </div>
+                  )}
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Repite la Contraseña</label>
+                  <div className="input-group">
+                    <input
+                      value={repiteContrasena}
+                      onChange={(e) => setRepiteContrasena(e.target.value)}
+                      type={mostrarRepiteContrasena ? "text" : "password"}
+                      className={`form-control ${error.repiteContrasena ? 'is-invalid' : ''}`}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary"
+                      onClick={() => setMostrarRepiteContrasena(!mostrarRepiteContrasena)}
+                    >
+                      {mostrarRepiteContrasena ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                  </div>
+                  {error.repiteContrasena && (
+                    <div className="invalid-feedback d-block">
+                      {error.repiteContrasena}
+                    </div>
+                  )}
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Rol</label>
+                  <Select
+                    options={roles}
+                    value={roles.find(option => option.value === rol)}
+                    onChange={(selectedOption) => setRol(selectedOption?.value)}
+                    placeholder="Selecciona un rol"
+                    isClearable
+                    isSearchable
                     required
                   />
                 </div>
                 <div className="mb-3">
-                  <label className="form-label">Rol</label>
-                  <select
-                    value={rol}
-                    onChange={(e) => setRol(e.target.value)}
-                    className="form-select"
-                    required
-                  >
-                    <option value="">Selecciona un rol</option>
-                    {roles.map((role, index) => (
-                      <option key={index} value={role}>
-                        {role.charAt(0).toUpperCase() + role.slice(1)}
-                      </option>
-                    ))}
-                  </select>
-                  </div>
-                  <div className="mb-3">
                   <label className="form-label">Empleado</label>
-                    <select
-                    value={id_empleado}
-                    onChange={(e) => setIdEmpleado(e.target.value)}  // Usamos el ID del empleado
-                    className="form-select"
+                  <Select
+                    options={empleados}
+                    value={empleados.find(option => option.value === id_empleado)}
+                    onChange={(selectedOption) => setIdEmpleado(selectedOption?.value)}
+                    placeholder="Selecciona un empleado"
+                    isClearable
+                    isSearchable
                     required
-                    >
-                <option value="">Selecciona un empleado</option>
-                {empleados.map((empleado) => (
-                  <option key={empleado.id} value={empleado.id}>
-                  {empleado.nombre_empleado}
-                </option>
-                ))}
-              </select>
+                  />
                 </div>
                 <div className="form-group text-center">
                   <button type="submit" className="btn btn-primary mr-4 mx-4">Guardar</button>
-                  <button type="button" className="btn btn-danger" onClick={cancelar}>Cancelar</button>
+                  <button type="button" className="btn btn-danger" onClick={() => navigate('/usuarios')}>Cancelar</button>
                 </div>
               </form>
             </div>
