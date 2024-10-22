@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from 'react-toastify';  // Importar toast para notificaciones
+import 'react-toastify/dist/ReactToastify.css'; // Importar estilos de toastify
 
 const URI = 'http://localhost:8000/clientes/';
 
@@ -21,7 +23,7 @@ const CompEditCustomers = () => {
 
     useEffect(() => {
         // Definir la función dentro de useEffect para evitar dependencias innecesarias
-        const getCustomerBlogId = async () => {
+        const getCustomerById = async () => {
             try {
                 const res = await axios.get(`${URI}${id}`);
                 if (res.data) {
@@ -32,15 +34,21 @@ const CompEditCustomers = () => {
                     setEmail(res.data.email || '');
                     setTelefono(res.data.telefono || '');
                     setFecha_Nacimiento(res.data.fecha_nacimiento || '');
-                    setSexo(res.data.sexo || ''); // Cargar el valor de sexo
+
+                    // Asegúrate de que el valor de sexo coincida exactamente con una opción
+                    const sexoDbValue = res.data.sexo ? res.data.sexo.trim().toLowerCase() : '';
+                    const matchedSexo = sexos.find((sexoOption) =>
+                        sexoOption.toLowerCase() === sexoDbValue
+                    );
+                    setSexo(matchedSexo || ''); // Si no se encuentra, deja vacío
                 }
             } catch (error) {
                 console.error("Error al obtener los datos del Cliente:", error);
             }
         };
 
-        getCustomerBlogId();
-    }, [id]); // Solo 'id' como dependencia
+        getCustomerById();  
+    });
 
     //validacion de caracteres en el campo telefono
     const handleTelefonoChange = (e) => {
@@ -68,6 +76,7 @@ const CompEditCustomers = () => {
                 fecha_nacimiento,
                 sexo  // Incluye el sexo en la actualización
             });
+            toast.success('Cliente actualizado con éxito');  // Mostrar notificación de éxito
             navigate('/clientes');
         } catch (error) {
             console.error("Error al actualizar el Cliente:", error);

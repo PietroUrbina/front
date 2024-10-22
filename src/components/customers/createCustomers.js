@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';  // Importar toast para notificaciones
+import 'react-toastify/dist/ReactToastify.css'; // Importar estilos de toastify
 
 const URI = 'http://localhost:8000/clientes/';
 const RENIEC_URI = 'http://localhost:8000/clientes/reniec'; // Asegúrate de que la ruta es correcta
@@ -63,8 +65,10 @@ const CompCreateCustomers = () => {
 
     try {
       await axios.post(URI, { dni, nombre, apellido, direccion, email, telefono, fecha_nacimiento, sexo });
+      toast.success('Cliente creado con éxito');  // Mostrar notificación de éxito
       navigate('/clientes');
     } catch (error) {
+      toast.success('Error crear al cliente');
       console.error('Error al crear cliente', error);
     }
   };

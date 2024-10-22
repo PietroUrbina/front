@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from 'react-toastify';  // Importar toast
+import 'react-toastify/dist/ReactToastify.css'; // Importar estilos de toastify
 
 const URI = 'http://localhost:8000/box/';
 
@@ -38,8 +40,10 @@ const CompEditBox = () => {
                 capacidad,
                 requisitos
             });
+            toast.success('Box actualizado con éxito');  // Mostrar éxito
             navigate('/box');
         } catch (error) {
+            toast.success('Error al actualizar el box');  // Mostrar éxito
             console.error("Error al actualizar el box:", error);
         }
     };

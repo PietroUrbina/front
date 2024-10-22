@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';  // Importar toast
+import 'react-toastify/dist/ReactToastify.css'; // Importar estilos de toastify
 
 const URI = 'http://localhost:8000/box/';
 
@@ -12,8 +14,9 @@ const CompCreateBox = () => {
 
   // Procedimiento para guardar el nuevo box
   const guardar = async (e) => {
-    e.preventDefault(); // Corregido
-    await axios.post(URI, { nombre_box, capacidad });
+    e.preventDefault();
+    await axios.post(URI, { nombre_box, capacidad, requisitos });
+    toast.success('Box registrado con éxito');  // Mostrar éxito
     navigate('/box');
   };
 

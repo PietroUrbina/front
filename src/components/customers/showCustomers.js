@@ -1,7 +1,10 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import '../../assets/styles/mainTables.scss'; // Asegúrate de que esta ruta es correcta
+import { Modal, Button } from 'react-bootstrap'; // Importar Modal y Button de Bootstrap
+import { toast } from 'react-toastify';  // Importar toast para notificaciones
+import 'react-toastify/dist/ReactToastify.css'; // Importar estilos de toastify
+import '../../assets/styles/mainTables.scss';
 
 const URI = 'http://localhost:8000/clientes/';
 
@@ -10,6 +13,8 @@ const CompShowCustomers = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [customersPerPage] = useState(10); // Clientes por página
+    const [showModal, setShowModal] = useState(false); // Estado para mostrar/ocultar el modal
+    const [selectedCliente, setSelectedCliente] = useState(null); // Cliente seleccionado para eliminar
 
     useEffect(() => {
         getClientes();
@@ -18,16 +23,15 @@ const CompShowCustomers = () => {
     const getClientes = async () => {
         try {
             const res = await axios.get(URI);
-            // Verifica que res.data sea un array
             if (Array.isArray(res.data)) {
                 setClientes(res.data);
             } else {
-                setClientes([]); // En caso de que la respuesta no sea un array, asegurarse de que sea un array vacío
+                setClientes([]);
                 console.error("La respuesta no es un array", res.data);
             }
         } catch (error) {
             console.error("Error al obtener los clientes", error);
-            setClientes([]); // Maneja el error asignando un array vacío
+            setClientes([]);
         }
     };
 
@@ -35,13 +39,31 @@ const CompShowCustomers = () => {
         try {
             await axios.delete(`${URI}${id}`);
             getClientes(); // Refresca la lista de clientes
+            toast.success('Cliente eliminado con éxito');  // Mostrar notificación de éxito
         } catch (error) {
+            toast.error('Error al eliminar el cliente');
             console.error("Error al eliminar el cliente", error);
         }
     };
 
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);
+    };
+
+    const handleShowModal = (cliente) => {
+        setSelectedCliente(cliente);
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
+
+    const handleDeleteConfirmed = async () => {
+        if (selectedCliente) {
+            await deleteCliente(selectedCliente.id);
+            setShowModal(false);
+        }
     };
 
     // Filtrar clientes basado en búsqueda por nombre, apellido o DNI
@@ -99,8 +121,14 @@ const CompShowCustomers = () => {
                             <td>{cliente.fecha_nacimiento}</td>
                             <td>{cliente.sexo}</td>
                             <td>
-                                <Link to={`/clientes/edit/${cliente.id}`} className='btn btn-info'><i className="fa-solid fa-pen-to-square"></i></Link>
-                                <button onClick={() => deleteCliente(cliente.id)} className='btn btn-danger'><i className="fa-solid fa-trash"></i></button>
+                                <Link to={`/clientes/edit/${cliente.id}`} className='btn btn-info'>
+                                    <i className="fa-solid fa-pen-to-square"></i>
+                                </Link>
+                                <button
+                                    onClick={() => handleShowModal(cliente)}
+                                    className='btn btn-danger'>
+                                    <i className="fa-solid fa-trash"></i>
+                                </button>
                             </td>
                         </tr>
                     ))}
@@ -113,6 +141,22 @@ const CompShowCustomers = () => {
                     </button>
                 ))}
             </div>
+
+            {/* Modal de confirmación para eliminar */}
+            <Modal show={showModal} onHide={handleCloseModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Mensaje de confirmación</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>¿Seguro que quieres eliminar este cliente?</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseModal}>
+                        Cerrar
+                    </Button>
+                    <Button variant="danger" onClick={handleDeleteConfirmed}>
+                        Sí, Eliminar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     )
 }
