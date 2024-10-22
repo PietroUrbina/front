@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';  // Importar toast
+import 'react-toastify/dist/ReactToastify.css'; // Importar estilos de toastify
 
 const URI = 'http://localhost:8000/productos/';
 const CATEGORIAS_URI = 'http://localhost:8000/categorias/'; // URI para obtener las categorías
@@ -32,7 +34,6 @@ const CompCreateProducts = () => {
   // Procedimiento para guardar el nuevo Producto
   const guardar = async (e) => {
     e.preventDefault();
-
     const productoData = {
       nombre,
       descripcion,
@@ -44,8 +45,10 @@ const CompCreateProducts = () => {
 
     try {
       await axios.post(URI, productoData);
+      toast.success('Inventario registrado con éxito');  // Mostrar éxito
       navigate('/productos');
     } catch (error) {
+      toast.error('Error al crear el inventario');
       console.error('Error al crear el producto:', error);
     }
   };

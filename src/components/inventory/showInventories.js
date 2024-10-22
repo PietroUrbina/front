@@ -162,7 +162,7 @@ const CompShowInventories = () => {
                                 </span>
                             </td>
 
-                            <td>{inventario.precio}</td>
+                            <td>S/{inventario.precio}</td>
                             <td>{inventario.unidad_medida}</td>
                             <td>{inventario.tipo_movimiento}</td>
                             <td>{inventario.fecha_movimiento}</td>

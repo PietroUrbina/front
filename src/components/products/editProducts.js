@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from 'react-toastify';  // Importar toast
+import 'react-toastify/dist/ReactToastify.css'; // Importar estilos de toastify
 
 const URI = 'http://localhost:8000/productos/';
 const CATEGORIAS_URI = 'http://localhost:8000/categorias/'; // URI para obtener las categorías
@@ -9,7 +11,7 @@ const CompEditProduct = () => {
     const [nombre, setNombre] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [id_categoria, setIdCategoria] = useState('');
-    const [precio, setPrecio] = useState('');
+    const [costo, setCosto] = useState('');
     const [fecha_vencimiento, setFechaVencimiento] = useState('');
     const [imagen, setImagen] = useState('');
     const [categorias, setCategorias] = useState([]); // Estado para las categorías
@@ -25,7 +27,7 @@ const CompEditProduct = () => {
                     setNombre(res.data.nombre || '');
                     setDescripcion(res.data.descripcion || '');
                     setIdCategoria(res.data.id_categoria || '');
-                    setPrecio(res.data.precio || '');
+                    setCosto(res.data.costo || '');
                     setImagen(res.data.imagen || '');
                     setFechaVencimiento(res.data.fecha_vencimiento ? res.data.fecha_vencimiento.split('T')[0] : '');
                 }
@@ -55,12 +57,14 @@ const CompEditProduct = () => {
                 nombre,
                 descripcion,
                 id_categoria,
-                precio,
+                costo,
                 fecha_vencimiento: fecha_vencimiento || null, // Envía null si no hay fecha
                 imagen
             });
+            toast.success('Inventario actualizado con éxito');  // Mostrar notificación
             navigate('/productos');
         } catch (error) {
+            toast.error('Error al actualizar el inventario');
             console.error("Error al actualizar el Producto:", error);
         }
     };
@@ -115,10 +119,10 @@ const CompEditProduct = () => {
                                     </select>
                                 </div>
                                 <div className="mb-3">
-                                    <label className="form-label">Precio</label>
+                                    <label className="form-label">Costo</label>
                                     <input
-                                        value={precio}
-                                        onChange={(e) => setPrecio(e.target.value)}
+                                        value={costo}
+                                        onChange={(e) => setCosto(e.target.value)}
                                         type="number"
                                         className="form-control"
                                         required
