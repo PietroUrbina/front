@@ -1,0 +1,74 @@
+/* General Layout */
+.App {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Estructura principal debajo del Navbar */
+.app-body {
+  display: flex;
+  height: calc(100vh - 60px); /* Altura total menos el navbar */
+}
+
+/* Navbar */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px; /* Altura del navbar */
+  background-color: #343a40;
+  color: #ffffff;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #343a40;
+  color: #ffffff;
+  padding-top: 20px;
+  overflow-y: auto;
+}
+
+/* Contenedor del contenido principal */
+/* Asegúrate de que el div content ocupa todo el espacio disponible */
+.content {
+  flex-grow: 1;
+  padding: 20px; /* Este padding crea el espacio dentro del content */
+  background-color: #f0101000;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+.content.full-width {
+  margin-left: 0;
+}
+
+/* Estilos para el contenedor de la tabla */
+.table-container {
+  width: 100%; /* Ocupa el ancho completo del div content */
+  background-color: #ffffff; /* Opcional, para diferenciar la tabla */
+  overflow-x: auto; /* Habilita desplazamiento horizontal en la tabla si es necesario */
+  padding: 0;
+  margin: 0; /* Elimina cualquier margen adicional */
+}
+
+/* Elimina el margen cuando el sidebar está oculto (para dispositivos móviles) */
+.content.full-width {
+  margin: 2px 2px 2px 2px;
+  /* Asegura el mismo margen en todos los lados, incluso en dispositivos más pequeños */
+}
+
+/* Ajuste para pantallas pequeñas */
+@media (max-width: 768px) {
+  .content {
+    margin: 1cm; /* Reduce el margen en dispositivos móviles */
+  }
+}
+

@@ -1,89 +1,59 @@
-import React, { useState } from 'react';
-import './Sidebar.css'; // Asegúrate de que los estilos sean correctos
-import { Link } from 'react-router-dom';
+// src/home/NavSideBar/Sidebar.js
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import './Sidebar.css';
 
-const NavSidebar = () => {
-  const [isActive, setIsActive] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsActive(!isActive);
-  };
+const Sidebar = () => {
+  const location = useLocation();
 
   return (
-    <div className={`container ${isActive ? 'active' : ''}`}>
-      {/* Sidebar */}
-      <div className={`navigation ${isActive ? 'active' : ''}`}>
+    <div className="sidebar">
+      <nav className="sidebar-nav">
         <ul>
-          <li>
-            <Link to="#">
-              <span className="icon"><ion-icon name="logo-apple"></ion-icon></span>
-              <span className="title" style={{ fontSize: '1.5em', fontWeight: 500 }}>Brand Name</span>
+          <li className={location.pathname === "/usuarios" ? "active" : ""}>
+            <Link to="/usuarios">
+              <i className="fas fa-user"></i> Usuarios
             </Link>
           </li>
-          <li className="hovered">
-            <Link to="#">
-              <span className="icon"><ion-icon name="home-outline"></ion-icon></span>
-              <span className="title">Dashboard</span>
+          <li className={location.pathname === "/empleados" ? "active" : ""}>
+            <Link to="/empleados">
+              <i className="fas fa-briefcase"></i> Empleados
             </Link>
           </li>
-          <li>
-            <Link to="#">
-              <span className="icon"><ion-icon name="people-outline"></ion-icon></span>
-              <span className="title">Customers</span>
+          <li className={location.pathname === "/box" ? "active" : ""}>
+            <Link to="/box">
+              <i className="fas fa-box"></i> Box
             </Link>
           </li>
-          <li>
-            <Link to="#">
-              <span className="icon"><ion-icon name="chatbubble-outline"></ion-icon></span>
-              <span className="title">Message</span>
+          <li className={location.pathname === "/categorias" ? "active" : ""}>
+            <Link to="/categorias">
+              <i className="fas fa-tags"></i> Categorías
             </Link>
           </li>
-          <li>
-            <Link to="#">
-              <span className="icon"><ion-icon name="help-outline"></ion-icon></span>
-              <span className="title">Help</span>
+          <li className={location.pathname === "/productos" ? "active" : ""}>
+            <Link to="/productos">
+              <i className="fas fa-box-open"></i> Productos
             </Link>
           </li>
-          <li>
-            <Link to="#">
-              <span className="icon"><ion-icon name="settings-outline"></ion-icon></span>
-              <span className="title">Settings</span>
+          <li className={location.pathname === "/clientes" ? "active" : ""}>
+            <Link to="/clientes">
+              <i className="fas fa-users"></i> Clientes
             </Link>
           </li>
-          <li>
-            <Link to="#">
-              <span className="icon"><ion-icon name="lock-closed-outline"></ion-icon></span>
-              <span className="title">Password</span>
+          <li className={location.pathname === "/inventarios" ? "active" : ""}>
+            <Link to="/inventarios">
+              <i className="fas fa-warehouse"></i> Inventarios
             </Link>
           </li>
-          <li>
-            <Link to="#">
-              <span className="icon"><ion-icon name="log-out-outline"></ion-icon></span>
-              <span className="title">Sign Out</span>
+          <li className={location.pathname === "/ventas" ? "active" : ""}>
+            <Link to="/ventas">
+              <i className="fas fa-shopping-cart"></i> Ventas
             </Link>
           </li>
         </ul>
-      </div>
-
-      {/* Main Content */}
-      <div className={`main ${isActive ? 'active' : ''}`}>
-        <div className="topbar">
-          <div className="toggle" onClick={toggleSidebar}>
-            <ion-icon name="menu-outline"></ion-icon>
-          </div>
-          <div className="search">
-            <label>
-              <input type="text" placeholder="Search here" />
-              <ion-icon name="search-outline"></ion-icon>
-            </label>
-          </div>
-          <div className="user">
-            <img src="/assets/user.jpg" alt="User" />
-          </div>
-        </div>
-      </div>
+      </nav>
     </div>
   );
 };
 
-export default NavSidebar;
+export default Sidebar;
