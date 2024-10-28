@@ -1,0 +1,102 @@
+/* Estilos generales para centrar el formulario */
+.recuperar-container {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.cancel-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #cc0d0d;
+  cursor: pointer;
+}
+
+.cancel-button:hover {
+  color: #dc3545; /* Cambia a rojo cuando el mouse pasa por encima */
+}
+
+h2 {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+p {
+  text-align: center;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  color: #666;
+}
+
+.input-container {
+  margin-bottom: 20px;
+}
+
+.input-container label {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.input-container input {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.recuperar-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+}
+
+.recuperar-button:hover {
+  background-color: #0056b3;
+}
+
+.regresar-button {
+  background-color: #dc3545;
+}
+
+.success-message {
+  margin-top: 15px;
+  color: green;
+  text-align: center;
+}
+
+.error-message {
+  margin-top: 15px;
+  color: red;
+  text-align: center;
+}
+
+/* Estilo responsivo */
+@media (max-width: 768px) {
+  .recuperar-container {
+    width: 90%;
+    padding: 10px;
+  }
+}
