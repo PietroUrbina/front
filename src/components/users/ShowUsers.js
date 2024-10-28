@@ -1,12 +1,12 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import { Button, Modal } from 'react-bootstrap'; // Importar componentes de Bootstrap
-import CompEditUser from './EditUsers'; // Importar el componente que se usará como modal
-import ChangePasswordModal from './changePassword'; // Importar modal de cambiar contraseña
-import { Link } from 'react-router-dom'; // Importar Link para la navegación
-import { toast } from 'react-toastify';  // Importar toast para notificaciones
-import 'react-toastify/dist/ReactToastify.css'; // Importar estilos de toastify
-import { FaKey } from 'react-icons/fa';  // Importar el ícono de llave
+import { Button, Modal } from 'react-bootstrap';
+import CompEditUser from './EditUsers';
+import ChangePasswordModal from './changePassword';
+import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { FaKey } from 'react-icons/fa';
 import '../../assets/styles/mainTables.scss';
 
 const URI = 'http://localhost:8000/usuarios/';
@@ -15,12 +15,12 @@ const CompShowUsers = () => {
     const [usuarios, setUsuarios] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const [UsuariosPerPage] = useState(10); // Usuarios por página
-    const [showEditModal, setShowEditModal] = useState(false); // Control del modal de edición
-    const [showPasswordModal, setShowPasswordModal] = useState(false); // Control del modal de cambiar contraseña
-    const [showDeleteModal, setShowDeleteModal] = useState(false); // Modal de confirmación de eliminar
-    const [selectedUserId, setSelectedUserId] = useState(null); // ID del usuario seleccionado para editar
-    const [selectedDeleteUserId, setSelectedDeleteUserId] = useState(null); // ID del usuario seleccionado para eliminar
+    const [UsuariosPerPage] = useState(10);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedUserId, setSelectedUserId] = useState(null);
+    const [selectedDeleteUserId, setSelectedDeleteUserId] = useState(null);
 
     useEffect(() => {
         getUsuarios();
@@ -39,10 +39,10 @@ const CompShowUsers = () => {
         try {
             await axios.delete(`${URI}${selectedDeleteUserId}`);
             getUsuarios();
-            toast.success('Usuario eliminado con éxito');  // Mostrar notificación de éxito
-            setShowDeleteModal(false); // Ocultar el modal de eliminación
+            toast.success('Usuario eliminado con éxito');
+            setShowDeleteModal(false);
         } catch (error) {
-            toast.error('Error al eliminar el usuario'); 
+            toast.error('Error al eliminar el usuario');
             console.error("Error al eliminar el usuario:", error);
         }
     };
@@ -63,29 +63,29 @@ const CompShowUsers = () => {
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
     const handleEditClick = (userId) => {
-        setSelectedUserId(userId); // Establecer el ID del usuario seleccionado
-        setShowEditModal(true); // Mostrar el modal de edición
+        setSelectedUserId(userId);
+        setShowEditModal(true);
     };
 
     const handlePasswordChangeClick = (userId) => {
-        setSelectedUserId(userId); // Establecer el ID del usuario seleccionado para cambiar contraseña
-        setShowPasswordModal(true); // Mostrar el modal de cambiar contraseña
+        setSelectedUserId(userId);
+        setShowPasswordModal(true);
     };
 
     const handleCloseEditModal = () => {
-        setShowEditModal(false); // Ocultar el modal de edición
-        setSelectedUserId(null); // Restablecer el ID seleccionado
-        getUsuarios(); // Refrescar los datos después de la actualización
+        setShowEditModal(false);
+        setSelectedUserId(null);
+        getUsuarios();
     };
 
     const handleClosePasswordModal = () => {
-        setShowPasswordModal(false); // Ocultar el modal de cambiar contraseña
-        setSelectedUserId(null); // Restablecer el ID seleccionado
+        setShowPasswordModal(false);
+        setSelectedUserId(null);
     };
 
     const handleShowDeleteModal = (userId) => {
         setSelectedDeleteUserId(userId);
-        setShowDeleteModal(true); // Mostrar el modal de confirmación para eliminar
+        setShowDeleteModal(true);
     };
 
     const handleCloseDeleteModal = () => {
@@ -98,57 +98,66 @@ const CompShowUsers = () => {
 
     return (
         <div className='container'>
-            <div className='table-header d-flex justify-content-between align-items-center'>
-                <Link to="/usuarios/create" className='btn btn-primary add-button'>
-                    + Agregar Usuario
+            <div className='table-header'>
+                <Link to="/usuarios/create" className='add-button'>
+                    <i className="fa fa-plus"></i> Agregar Usuario
                 </Link>
-                <input
-                    type="text"
-                    className="search-input"
-                    placeholder="Buscar Usuarios..."
-                    value={searchTerm}
-                    onChange={handleSearch}
-                />
+                <div className="search-container">
+                    <input
+                        type="text"
+                        className="search-input"
+                        placeholder="Buscar Usuarios..."
+                        value={searchTerm}
+                        onChange={handleSearch}
+                    />
+                </div>
             </div>
-            <table className="table">
-                <thead>
-                    <tr>
-                        <th>Nombre de Usuario</th>
-                        <th>Rol</th>
-                        <th>Empleado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {currentUsuarios.map((usuario) => (
-                        <tr key={usuario.id}>
-                            <td>{usuario.nombre_usuario}</td>
-                            <td>{usuario.rol}</td>
-                            <td>{usuario.empleado?.nombre_empleado || 'No asignado'}</td>
-                            <td>
-                                <Button
-                                    className="btn btn-info mx-1"
-                                    onClick={() => handleEditClick(usuario.id)}
-                                >
-                                    <i className="fa-solid fa-pen-to-square"></i>
-                                </Button>
-                                <Button
-                                    className="btn btn-warning mx-1"
-                                    onClick={() => handlePasswordChangeClick(usuario.id)}
-                                >
-                                    <FaKey /> {/* Ícono de llave */}
-                                </Button>
-                                <Button
-                                    className="btn btn-danger mx-1"
-                                    onClick={() => handleShowDeleteModal(usuario.id)}
-                                >
-                                    <i className="fa-solid fa-trash"></i>
-                                </Button>
-                            </td>
+
+            {/* Contenedor independiente para habilitar el scroll solo en la tabla */}
+            <div className="table-responsive">
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre de Usuario</th>
+                            <th>Rol</th>
+                            <th>Empleado</th>
+                            <th>Acciones</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {currentUsuarios.map((usuario) => (
+                            <tr key={usuario.id}>
+                                <td>{usuario.nombre_usuario}</td>
+                                <td>{usuario.rol}</td>
+                                <td>{usuario.empleado?.nombre_empleado || 'No asignado'}</td>
+                                <td>
+                                    <div className="actions">
+                                        <Button
+                                            className="btn btn-info mx-1"
+                                            onClick={() => handleEditClick(usuario.id)}
+                                        >
+                                            <i className="fa-solid fa-pen-to-square"></i>
+                                        </Button>
+                                        <Button
+                                            className="btn btn-warning mx-1"
+                                            onClick={() => handlePasswordChangeClick(usuario.id)}
+                                        >
+                                            <FaKey />
+                                        </Button>
+                                        <Button
+                                            className="btn btn-danger mx-1"
+                                            onClick={() => handleShowDeleteModal(usuario.id)}
+                                        >
+                                            <i className="fa-solid fa-trash"></i>
+                                        </Button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
             {filteredUsuarios.length > 0 && (
                 <div className="pagination">
                     {[...Array(Math.ceil(filteredUsuarios.length / UsuariosPerPage)).keys()].map(number => (

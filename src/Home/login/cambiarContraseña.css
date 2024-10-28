@@ -1,0 +1,73 @@
+/* Estilos del contenedor del formulario */
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Ocupa toda la altura de la ventana */
+  background-color: #f8f9fa; /* Color de fondo ligero */
+}
+
+.form-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px; /* Bordes redondeados */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  width: 400px; /* Ancho fijo del formulario */
+  text-align: center; /* Centrar el contenido */
+}
+
+/* Estilo del encabezado */
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.form-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.close-button {
+  background-color: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  color: red; /* Cambia a rojo cuando se pasa el ratón */
+}
+
+/* Estilos del cuerpo del formulario */
+.form-body {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-control {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* Estilos del pie del formulario */
+.form-footer {
+  margin-top: 20px;
+}
+
+.form-footer .btn {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+}
+
+/* Responsivo para pantallas más pequeñas */
+@media (max-width: 768px) {
+  .form-content {
+    width: 90%; /* Ajusta el ancho del formulario para pantallas pequeñas */
+  }
+}

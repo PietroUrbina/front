@@ -6,37 +6,37 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../assets/styles/mainTables.scss';
 
-const URI = 'http://localhost:8000/box/';
+const URI = 'http://localhost:8000/categorias/';
 
-const CompShowBox = () => {
-    const [boxes, setBoxes] = useState([]);
+const CompShowCategorias = () => {
+    const [categorias, setCategorias] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const [boxesPerPage] = useState(10);
+    const [categoriasPerPage] = useState(10);
     const [showModal, setShowModal] = useState(false);
-    const [selectedBox, setSelectedBox] = useState(null);
+    const [selectedCategoria, setSelectedCategoria] = useState(null);
 
     useEffect(() => {
-        getBoxes();
+        getCategorias();
     }, []);
 
-    const getBoxes = async () => {
+    const getCategorias = async () => {
         try {
             const res = await axios.get(URI);
-            setBoxes(res.data);
+            setCategorias(res.data);
         } catch (error) {
-            console.error("Error al obtener los boxes:", error);
+            console.error("Error al obtener las categorías:", error);
         }
     };
 
-    const deleteBox = async (id) => {
+    const deleteCategoria = async (id) => {
         try {
             await axios.delete(`${URI}${id}`);
-            getBoxes();
-            toast.success('Box eliminado con éxito');
+            toast.success('Categoría eliminada con éxito');
+            getCategorias();
         } catch (error) {
-            toast.error('Error al eliminar el box');
-            console.error("Error al eliminar el box:", error);
+            toast.error('Error al eliminar la categoría');
+            console.error("Error al eliminar la categoría:", error);
         }
     };
 
@@ -45,8 +45,8 @@ const CompShowBox = () => {
         setCurrentPage(1);
     };
 
-    const handleShowModal = (box) => {
-        setSelectedBox(box);
+    const handleShowModal = (categoria) => {
+        setSelectedCategoria(categoria);
         setShowModal(true);
     };
 
@@ -55,33 +55,33 @@ const CompShowBox = () => {
     };
 
     const handleDeleteConfirmed = async () => {
-        if (selectedBox) {
-            await deleteBox(selectedBox.id);
+        if (selectedCategoria) {
+            await deleteCategoria(selectedCategoria.id);
             setShowModal(false);
         }
     };
 
-    const filteredBoxes = boxes.filter(box =>
-        box.nombre_box.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredCategorias = categorias.filter(categoria =>
+        categoria.nombre_categoria.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const indexOfLastBox = currentPage * boxesPerPage;
-    const indexOfFirstBox = indexOfLastBox - boxesPerPage;
-    const currentBoxes = filteredBoxes.slice(indexOfFirstBox, indexOfLastBox);
+    const indexOfLastCategoria = currentPage * categoriasPerPage;
+    const indexOfFirstCategoria = indexOfLastCategoria - categoriasPerPage;
+    const currentCategorias = filteredCategorias.slice(indexOfFirstCategoria, indexOfLastCategoria);
 
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
     return (
         <div className='container'>
             <div className='table-header'>
-                <Link to="/box/create" className='add-button'>
-                    <i className="fa fa-plus"></i> Agregar Box
+                <Link to="/categorias/create" className='add-button'>
+                    <i className="fa fa-plus"></i> Agregar Categoría
                 </Link>
                 <div className="search-container">
                     <input
                         type="text"
                         className="search-input"
-                        placeholder="Buscar boxes..."
+                        placeholder="Buscar categorías..."
                         value={searchTerm}
                         onChange={handleSearch}
                     />
@@ -93,27 +93,27 @@ const CompShowBox = () => {
                 <table className="table">
                     <thead>
                         <tr>
-                            <th>Nombre del Box</th>
-                            <th>Capacidad</th>
-                            <th>Requisitos</th>
+                            <th>Nombre de la Categoría</th>
+                            <th>Descripción</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {currentBoxes.map((box) => (
-                            <tr key={box.id}>
-                                <td>{box.nombre_box}</td>
-                                <td>{box.capacidad}</td>
-                                <td>{box.requisitos}</td>
+                        {currentCategorias.map((categoria) => (
+                            <tr key={categoria.id}>
+                                <td>{categoria.nombre_categoria}</td>
+                                <td>{categoria.descripcion}</td>
                                 <td>
-                                    <Link to={`/box/edit/${box.id}`} className='btn btn-info'>
-                                        <i className="fa-solid fa-pen-to-square"></i>
-                                    </Link>
-                                    <button 
-                                        onClick={() => handleShowModal(box)} 
-                                        className='btn btn-danger'>
-                                        <i className="fa-solid fa-trash"></i>
-                                    </button>
+                                    <div className="actions">
+                                        <Link to={`/categorias/edit/${categoria.id}`} className='btn btn-info mx-1'>
+                                            <i className="fa-solid fa-pen-to-square"></i>
+                                        </Link>
+                                        <button 
+                                            onClick={() => handleShowModal(categoria)} 
+                                            className='btn btn-danger mx-1'>
+                                            <i className="fa-solid fa-trash"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         ))}
@@ -121,11 +121,11 @@ const CompShowBox = () => {
                 </table>
             </div>
 
-            {filteredBoxes.length > 0 && (
+            {filteredCategorias.length > 0 && (
                 <div className="pagination">
-                    {[...Array(Math.ceil(filteredBoxes.length / boxesPerPage)).keys()].map(number => (
+                    {[...Array(Math.ceil(filteredCategorias.length / categoriasPerPage)).keys()].map((number) => (
                         <button 
-                            key={number + 1} 
+                            key={`page-${number + 1}`} 
                             onClick={() => paginate(number + 1)} 
                             className={currentPage === number + 1 ? 'active' : ''}>
                             {number + 1}
@@ -139,7 +139,7 @@ const CompShowBox = () => {
                 <Modal.Header closeButton>
                     <Modal.Title>Mensaje de confirmación</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>¿Seguro que quieres eliminar este box?</Modal.Body>
+                <Modal.Body>¿Seguro que quieres eliminar esta categoría?</Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseModal}>
                         Cerrar
@@ -151,6 +151,6 @@ const CompShowBox = () => {
             </Modal>
         </div>
     );
-}
+};
 
-export default CompShowBox;
+export default CompShowCategorias;

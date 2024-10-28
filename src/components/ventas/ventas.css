@@ -1,0 +1,51 @@
+.venta-container {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+.producto-section {
+  flex: 2;
+}
+
+.producto-select {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.btn-agregar {
+  padding: 5px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.detalle-venta {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.detalle-venta th, .detalle-venta td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.formulario-venta {
+  flex: 1;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.btn-guardar {
+  padding: 10px 20px;
+  background-color: green;
+  color: white;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+}

@@ -1,17 +1,20 @@
-@import './variables'; // Asegúrate de que la ruta a las variables es correcta
+@import './variables';
 
 .container {
-  padding: 20px;
+  padding: 5px;
   background-color: $light-color;
   border-radius: $border-radius;
   box-shadow: $box-shadow;
-  width: 90%; // Aumenté el ancho para darle más espacio a la tabla
-  margin: 0 auto; // Centra el contenedor horizontalmente
-  overflow-x: auto; // Permite hacer scroll horizontal si la tabla es más grande que el contenedor
+  width: 100%;
+  max-width: none;
+  overflow-x: auto;
 
   .table-header {
     display: flex;
+    flex-wrap: wrap; // Permite que los elementos se ajusten en una nueva línea si es necesario
     justify-content: space-between;
+    align-items: center;
+    gap: 10px; // Espacio entre los elementos en dispositivos pequeños
     margin-bottom: $spacing-unit;
 
     .add-button {
@@ -26,28 +29,54 @@
       align-items: center;
       font-weight: bold;
       font-size: $font-size-base;
+      margin-right: 10px;
 
       &:hover {
         background-color: darken($primary-color, 10%);
       }
 
       i {
-        margin-right: 5px; // Icono de botón
+        margin-right: 5px;
       }
+    }
+
+    .search-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap; // Permite que los elementos se ajusten debajo en dispositivos pequeños
     }
 
     .search-input {
       padding: 10px;
       border: 1px solid $table-border-color;
       border-radius: $border-radius;
-      width: 300px;
+      width: 250px; // Ancho ajustado para pantallas pequeñas
       outline: none;
       font-size: $font-size-base;
+      margin-top: 10px; // Espacio superior en pantallas pequeñas
 
       &:focus {
         border-color: $primary-color;
       }
     }
+
+    .btn-secondary {
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      margin-right: 10px;
+      margin-top: 10px;
+
+      i {
+        margin-right: 5px;
+      }
+    }
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+    margin-top: 10px;
   }
 
   .table {
@@ -60,11 +89,11 @@
       padding: 12px 15px;
       border: 1px solid $table-border-color;
       text-align: left;
-      white-space: nowrap; // Evita que el contenido de las celdas se desborde
+      white-space: nowrap;
     }
 
     th {
-      background-color: $primary-color; // Color azul para la cabecera
+      background-color: $primary-color;
       color: white;
       font-size: $font-size-lg;
       text-align: center;
@@ -82,7 +111,7 @@
     }
 
     tr:hover {
-      background-color: lighten($primary-color, 20%); // Sombra más clara para hover
+      background-color: lighten($primary-color, 20%);
     }
 
     .btn {
@@ -94,7 +123,7 @@
       display: inline-block;
 
       &.btn-info {
-        background-color: #007BFF; // Color azul para el botón editar
+        background-color: #007BFF;
         color: white;
       }
 
@@ -117,39 +146,39 @@
     text-align: center;
 
     &.activo {
-      background-color: #28a745; // Verde para activo
+      background-color: #28a745;
     }
 
     &.inactivo {
-      background-color: #dc3545; // Rojo para inactivo
+      background-color: #dc3545;
     }
   }
 
   .pagination {
     display: flex;
-    justify-content: center; // Centra los botones de paginación
-    margin-top: 20px; // Espacio después de la tabla
-    gap: 10px; // Espacio entre botones
+    justify-content: center;
+    margin-top: 20px;
+    gap: 10px;
   
     button {
-      padding: 8px 16px; // Tamaño adecuado para los botones
-      font-size: $font-size-base; // Utiliza el tamaño de fuente base de tus variables
-      background-color: $primary-color; // Color principal para el fondo
-      color: white; // Texto blanco para mejor contraste
-      border: none; // Sin borde
-      border-radius: $border-radius; // Radio de borde de tus variables
-      cursor: pointer; // Cursor en forma de mano para indicar clic
+      padding: 8px 16px;
+      font-size: $font-size-base;
+      background-color: $primary-color;
+      color: white;
+      border: none;
+      border-radius: $border-radius;
+      cursor: pointer;
   
       &:hover {
-        background-color: darken($primary-color, 10%); // Oscurece el botón al pasar el mouse
+        background-color: darken($primary-color, 10%);
       }
   
       &:focus {
-        outline: none; // Remueve el contorno al hacer clic
+        outline: none;
       }
 
       &.active {
-        background-color: darken($primary-color, 20%); // Botón activo más oscuro
+        background-color: darken($primary-color, 20%);
       }
     }
   }
@@ -159,29 +188,27 @@
     justify-content: center;
     gap: 10px;
     margin-top: 20px;
-  } 
-
-  // Definir el estilo de los "chips" para stock y estado
-.chip {
-  display: inline-block;
-  padding: 5px 12px;
-  font-size: $font-size-sm;
-  font-weight: bold;
-  border-radius: 30px; // Bordes redondeados
-  color: white; // Texto blanco para contraste
-  text-align: center;
-  white-space: nowrap; // Evita que el texto se rompa
-
-  &.stock {
-    &.high { background-color: #28a745; }  // Verde para stock alto
-    &.medium { background-color: #ffc107; }  // Amarillo para stock medio
-    &.low { background-color: #dc3545; }  // Rojo para stock bajo
   }
 
-  &.estado {
-    &.activo { background-color: #28a745; }  // Verde para activo
-    &.inactivo { background-color: #dc3545; }  // Rojo para inactivo
-  }
-}
+  .chip {
+    display: inline-block;
+    padding: 5px 12px;
+    font-size: $font-size-sm;
+    font-weight: bold;
+    border-radius: 30px;
+    color: white;
+    text-align: center;
+    white-space: nowrap;
 
+    &.stock {
+      &.high { background-color: #28a745; }
+      &.medium { background-color: #ffc107; }
+      &.low { background-color: #dc3545; }
+    }
+
+    &.estado {
+      &.activo { background-color: #28a745; }
+      &.inactivo { background-color: #dc3545; }
+    }
+  }
 }
