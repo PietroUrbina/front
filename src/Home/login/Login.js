@@ -23,15 +23,17 @@ const Login = ({ actualizarUsuario }) => {
       });
       const token = response.data.token;
       const usuario = response.data.usuario;
+
+      // Guardar tanto el token como el usuario en localStorage
       localStorage.setItem('token', token);
-      actualizarUsuario(usuario);
-      actualizarUsuario(usuario); // Actualiza el usuario en App.js
-      navigate('/usuarios'); // Redirigir a una página protegida
+      localStorage.setItem('usuario', JSON.stringify(usuario));
+      actualizarUsuario(usuario); // Actualizar usuario en App.js
+      navigate('/usuarios'); // Redirigir a la página de usuarios
     } catch (error) {
       console.error("Error en el inicio de sesión:", error);
       if (error.response && error.response.status === 401) {
         setError('Credenciales incorrectas');
-        showErrorToast('Ingresaste mal tu contraseña');
+        showErrorToast('Contraseña Incorrecta');
       } else if (error.response && error.response.status === 404) {
         setError('El usuario no existe');
         showErrorToast('El usuario no existe');

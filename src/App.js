@@ -46,7 +46,7 @@ import CompVenta from './components/ventas/ventas';
 function App() {
   const location = useLocation(); 
   const [sidebarVisible, setSidebarVisible] = useState(true);
-
+  
   const [usuario, setUsuario] = useState(() => {
     const usuarioGuardado = localStorage.getItem('usuario');
     try {

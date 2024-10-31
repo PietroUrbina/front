@@ -1,17 +1,29 @@
+/* Contenedor principal */
 .venta-container {
   display: flex;
   gap: 20px;
   padding: 20px;
+  flex-wrap: wrap;
+  overflow: hidden; /* Evita el desbordamiento */
 }
 
+/* Sección de productos */
 .producto-section {
   flex: 2;
+  min-width: 300px;
+  position: relative; /* Para mantener el Select contenido */
 }
 
+/* Selector de productos */
 .producto-select {
   display: flex;
   gap: 10px;
   margin-bottom: 15px;
+}
+
+.producto-select .react-select__control {
+  width: 100%;
+  z-index: 1; /* Asegura que el Select se renderice sobre otros elementos pero dentro del contenedor */
 }
 
 .btn-agregar {
@@ -20,26 +32,41 @@
   color: white;
   border: none;
   cursor: pointer;
+  font-size: 0.9rem;
 }
 
+/* Tabla de detalle de productos */
 .detalle-venta {
   width: 100%;
   border-collapse: collapse;
 }
 
-.detalle-venta th, .detalle-venta td {
+.detalle-venta th,
+.detalle-venta td {
   padding: 10px;
   border: 1px solid #ddd;
   text-align: center;
 }
 
+/* Icono de eliminar con estilo */
+.detalle-venta td .btn.btn-danger {
+  background-color: #dc3545;
+  color: #fff;
+  border-radius: 5px;
+  padding: 5px;
+  font-size: 0.9rem;
+}
+
+/* Formulario de venta */
 .formulario-venta {
   flex: 1;
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 5px;
+  min-width: 280px;
 }
 
+/* Botón de guardar */
 .btn-guardar {
   padding: 10px 20px;
   background-color: green;
@@ -48,4 +75,41 @@
   cursor: pointer;
   width: 100%;
   margin-top: 10px;
+  font-size: 1rem;
+}
+
+/* Estilos para entradas de formulario */
+.formulario-venta input[type="text"],
+.formulario-venta input[type="number"],
+.formulario-venta select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+/* Títulos */
+.formulario-venta h3,
+.producto-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .venta-container {
+    flex-direction: column;
+  }
+
+  .producto-select {
+    flex-direction: column;
+  }
+
+  .btn-agregar {
+    width: 100%;
+    margin-top: 10px;
+  }
 }
