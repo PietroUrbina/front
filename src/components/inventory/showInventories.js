@@ -166,7 +166,7 @@ const CompShowInventories = () => {
                 <Modal.Header closeButton>
                     <Modal.Title>Mensaje de confirmación</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>¿Seguro que quieres eliminar el inventario?</Modal.Body>
+                <Modal.Body>¿Seguro que quieres eliminar este producto del inventario?</Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseModal}>Cerrar</Button>
                     <Button variant="danger" onClick={handleDeleteConfirmed}>Sí, Eliminar</Button>
