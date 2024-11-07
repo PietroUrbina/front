@@ -1,19 +1,24 @@
 // ClienteSelect.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BuscarClienteModal from './BuscarClientesModal';
 import { Button } from 'react-bootstrap';
 
-const ClienteSelect = ({ onClienteSeleccionado }) => {
+const ClienteSelect = ({ onClienteSeleccionado, resetCliente }) => {
   const [cliente, setCliente] = useState({ nombre: 'Público General' });
   const [isModalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (resetCliente) {
+      handleClearCliente();  // Limpiar cliente cuando `resetCliente` cambie a true
+    }
+  }, [resetCliente]);
 
   const handleOpenModal = () => setModalOpen(true);
   const handleCloseModal = () => setModalOpen(false);
 
   const handleSelectCliente = (clienteSeleccionado) => {
     setCliente(clienteSeleccionado);
-    onClienteSeleccionado(clienteSeleccionado); // Asegurarse de pasar el objeto completo
-    console.log("Cliente seleccionado:", cliente); // Agrega un log para depurar
+    onClienteSeleccionado(clienteSeleccionado);
     handleCloseModal();
   };
 

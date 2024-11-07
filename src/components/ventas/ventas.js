@@ -3,21 +3,24 @@ import axios from 'axios';
 import Select from 'react-select';
 import ClienteSelect from './ClienteSelect';
 import './ventas.css';
+import Swal from 'sweetalert2';
 
 const Venta = ({ usuario }) => {
   const [productos, setProductos] = useState([]);
   const [detalleVenta, setDetalleVenta] = useState([]);
   const [selectedProducto, setSelectedProducto] = useState(null);
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
+  const [resetCliente, setResetCliente] = useState(false); // Nuevo estado para reiniciar cliente
   const [metodoPago, setMetodoPago] = useState("efectivo");
-  const [totalPagado, setTotalPagado] = useState(0);
+  const [totalPagado, setTotalPagado] = useState('');
   const [evidencia, setEvidencia] = useState(null);
   const [nroOperacion, setNroOperacion] = useState('');
   const [cambio, setCambio] = useState(0); 
-  const [fechaActual, setFechaActual] = useState(new Date().toLocaleDateString());
+  const [fechaActual, setFechaActual] = useState(new Date().toLocaleString()); // Fecha y hora actuales
   const [usuarioEditable, setUsuarioEditable] = useState(usuario.nombre_usuario);
   const [tipoComprobante, setTipoComprobante] = useState('Boleta');
-  const [estado, setEstado] = useState('Emitido'); // Estado predeterminado
+  const [estado, setEstado] = useState('Emitido');
+  const [descuento, setDescuento] = useState(0);
 
   useEffect(() => {
     const fetchProductos = async () => {
@@ -35,7 +38,14 @@ const Venta = ({ usuario }) => {
   }, []);
 
   const agregarProducto = async () => {
-    if (!selectedProducto || !selectedProducto.value) return;
+    if (!selectedProducto || !selectedProducto.value) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Advertencia',
+        text: 'Tienes que buscar y seleccionar un producto para añadirlo a la lista.'
+      });
+      return;
+    }
 
     const url = `http://localhost:8000/inventarios/producto/${selectedProducto.value}`;
   
@@ -67,16 +77,14 @@ const Venta = ({ usuario }) => {
 
   const actualizarCantidad = (index, cantidad) => {
     const stockDisponible = detalleVenta[index].stock;
-    cantidad = Math.max(1, Math.min(cantidad, stockDisponible));
-
     const newDetalle = [...detalleVenta];
-    newDetalle[index].cantidad = cantidad;
-    newDetalle[index].subtotal = cantidad * newDetalle[index].precio_unitario;
+    newDetalle[index].cantidad = cantidad || '';
+    newDetalle[index].subtotal = cantidad ? cantidad * newDetalle[index].precio_unitario : 0;
     setDetalleVenta(newDetalle);
   };
 
   const handleTotalPagadoChange = (value) => {
-    setTotalPagado(value);
+    setTotalPagado(value || '');
     setCambio(value >= total ? value - total : 0);
   };
 
@@ -84,7 +92,8 @@ const Venta = ({ usuario }) => {
     setDetalleVenta(detalleVenta.filter((_, i) => i !== index));
   };
 
-  const total = detalleVenta.reduce((acc, item) => acc + item.subtotal, 0);
+  const totalSinDescuento = detalleVenta.reduce((acc, item) => acc + item.subtotal, 0);
+  const total = totalSinDescuento - descuento;
 
   const registrarVenta = async () => {
     if (!usuario || !usuario.id) return;
@@ -92,39 +101,72 @@ const Venta = ({ usuario }) => {
       console.error("El cliente seleccionado no es válido o está vacío.");
       return;
     }
-  
-    console.log("Cliente seleccionado antes de registrar venta:", clienteSeleccionado);
-  
+    if (!detalleVenta.length) {
+      alert("Por favor, agrega al menos un producto a la venta.");
+      return;
+    }
+
+    // Validación del monto pagado vs total
+    if (metodoPago === "efectivo" && (parseFloat(totalPagado) < total)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Monto insuficiente',
+        text: 'El monto pagado es menor a la cuenta total. Por favor, ingresa un monto suficiente.'
+      });
+      return;
+    }
+
     const ventaData = {
       id_usuario: usuario.id,
-      id_cliente: clienteSeleccionado.id_cliente, 
+      id_cliente: clienteSeleccionado.id_cliente,
       metodo_pago: metodoPago,
       total,
       total_pagado: metodoPago === "efectivo" ? totalPagado : null,
-      evidencia: metodoPago !== "efectivo" ? evidencia : null,
-      nro_operacion: metodoPago !== "efectivo" ? nroOperacion : null,
       tipo_comprobante: tipoComprobante,
       estado,
+      descuento,
+      fecha_emision: new Date().toISOString(), // Fecha y hora de creación
       productos: detalleVenta.map(item => ({
         id_producto: item.id_producto,
         cantidad: item.cantidad,
+        precio_unitario: item.precio_unitario,
         subtotal: item.subtotal
       })),
+      ...(metodoPago !== "efectivo" && {
+        nro_operacion: nroOperacion,
+        evidencia: evidencia ? evidencia.name : null,
+      })
     };
-  
+
     try {
-      await axios.post('http://localhost:8000/ventas', ventaData);
+      await axios.post('http://localhost:8000/ventas', ventaData, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
       setDetalleVenta([]);
-      setTotalPagado(0);
+      setTotalPagado('');
       setEvidencia(null);
       setNroOperacion('');
       setCambio(0);
-      console.log("Venta registrada con éxito");
+      setDescuento(0);
+      setClienteSeleccionado(null); // Limpia el cliente seleccionado
+      setResetCliente(true); // Activar el reinicio del cliente en ClienteSelect
+      setFechaActual(new Date().toLocaleString()); // Actualizar la fecha y hora a la actual
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Venta creada correctamente',
+        showConfirmButton: true,
+        confirmButtonText: 'OK'
+      });
+
+      setTimeout(() => setResetCliente(false), 100); // Reiniciar el estado de reset para futuras ventas
+
     } catch (error) {
       console.error("Error al registrar la venta:", error);
     }
   };
-  
 
   return (
     <div className="venta-container">
@@ -138,7 +180,13 @@ const Venta = ({ usuario }) => {
             isClearable
             styles={{ container: (provided) => ({ ...provided, width: '300px' }) }}
           />
-          <button onClick={agregarProducto} className="btn-agregar"> + Agregar producto</button>
+          <button 
+            onClick={agregarProducto} 
+            className="btn-agregar" 
+            disabled={!selectedProducto || detalleVenta.some(p => p.id_producto === selectedProducto.value)}
+          >
+            + Agregar producto
+          </button>
         </div>
 
         <table className="detalle-venta">
@@ -147,8 +195,8 @@ const Venta = ({ usuario }) => {
               <th>Producto</th>
               <th>Stock</th>
               <th>Cantidad</th>
-              <th>Precio</th>
-              <th>Subtotal</th>
+              <th>Precio (S/)</th>
+              <th>Subtotal (S/)</th>
               <th>Eliminar</th>
             </tr>
           </thead>
@@ -163,11 +211,12 @@ const Venta = ({ usuario }) => {
                     min="1"
                     max={detalle.stock}
                     value={detalle.cantidad}
-                    onChange={(e) => actualizarCantidad(index, parseInt(e.target.value) || 1)}
+                    onChange={(e) => actualizarCantidad(index, parseInt(e.target.value))}
+                    placeholder="1"
                   />
                 </td>
-                <td>{detalle.precio_unitario.toFixed(2)}</td>
-                <td>{detalle.subtotal.toFixed(2)}</td>
+                <td>S/ {detalle.precio_unitario.toFixed(2)}</td>
+                <td>S/ {detalle.subtotal.toFixed(2)}</td>
                 <td>
                   <button
                     onClick={() => eliminarProducto(index)}
@@ -186,17 +235,17 @@ const Venta = ({ usuario }) => {
       <div className="formulario-venta">
         <h3>Formulario de Venta</h3>
         <div>
-          <label>Fecha: </label>
-          <input type="text" value={fechaActual} onChange={(e) => setFechaActual(e.target.value)} />
+          <label>Fecha y Hora: </label>
+          <input type="text" value={fechaActual} readOnly />
         </div>
         <div>
           <label>Usuario: </label>
           <input type="text" value={usuarioEditable} onChange={(e) => setUsuarioEditable(e.target.value)} />
         </div>
-        <ClienteSelect onClienteSeleccionado={(cliente) => {
-            setClienteSeleccionado(cliente);
-            console.log("Cliente seleccionado en Venta.js:", cliente); // Verifica en la consola
-          }} />
+        <ClienteSelect 
+          onClienteSeleccionado={(cliente) => setClienteSeleccionado(cliente)}
+          resetCliente={resetCliente} // Enviamos la señal de reset
+        />
 
         <div>
           <label>Tipo de Comprobante: </label>
@@ -217,15 +266,16 @@ const Venta = ({ usuario }) => {
 
         {metodoPago === "efectivo" && (
           <div>
-            <label>Total pagado: </label>
+            <label>Total pagado (S/): </label>
             <input
               type="number"
               value={totalPagado}
               onChange={(e) => handleTotalPagadoChange(Number(e.target.value))}
+              placeholder="Ingrese el total pagado"
             />
             <div>
-              <label>Cambio: </label>
-              <input type="text" value={cambio.toFixed(2)} readOnly />
+              <label>Cambio (S/): </label>
+              <input type="text" value={`S/ ${cambio.toFixed(2)}`} readOnly />
             </div>
           </div>
         )}
@@ -243,8 +293,20 @@ const Venta = ({ usuario }) => {
           </div>
         )}
 
+        <div>
+          <label>Descuento (S/): </label>
+          <input
+            type="number"
+            value={descuento}
+            onChange={(e) => setDescuento(Number(e.target.value))}
+            placeholder="0"
+          />
+        </div>
+
         <h3>Total: S/{total.toFixed(2)}</h3>
-        <button className="btn-guardar" onClick={registrarVenta}>Guardar Venta</button>
+        <button className="btn-guardar" onClick={registrarVenta} disabled={!detalleVenta.length || !clienteSeleccionado}>
+          Guardar Venta
+        </button>
       </div>
     </div>
   );
