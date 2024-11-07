@@ -47,7 +47,12 @@ const Sidebar = () => {
           </li>
           <li className={location.pathname === "/ventas" ? "active" : ""}>
             <Link to="/ventas">
-              <i className="fas fa-shopping-cart"></i> Ventas
+              <i className="fas fa-cart-plus "></i> Ventas
+            </Link>
+          </li>
+          <li className={location.pathname === "/ventasRealizadas" ? "active" : ""}>
+            <Link to="/ventasRealizadas">
+              <i className="fas fa-shopping-cart"></i> Ventas Realizadas
             </Link>
           </li>
         </ul>

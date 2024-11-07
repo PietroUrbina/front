@@ -42,6 +42,7 @@ import CompCreateInventories from './components/inventory/createInventory';
 import CompEditInventories from './components/inventory/editInventory';
 
 import CompVenta from './components/ventas/ventas';
+import CompVentasRealizadas from './components/ventasRealizadas/ventasRealizadas'
 
 function App() {
   const location = useLocation(); 
@@ -125,6 +126,7 @@ function App() {
 
                 {/* Rutas para Ventas */}
                 <Route path="/ventas" element={<CompVenta usuario={usuario} />} />
+                <Route path="/ventasRealizadas" element={<CompVentasRealizadas usuario={usuario} />} />
 
                 {/* Ruta para Logout */}
                 <Route path="/logout" element={<Logout actualizarUsuario={actualizarUsuario} />} />
