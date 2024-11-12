@@ -1,13 +1,14 @@
-/* src/components/Navbar.css */
-
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #343a40;
+  background-color: #f5f8ff; /* Color de fondo */
   color: #ffffff;
   padding: 0.5rem 1rem;
   height: 60px;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
 }
 
 .navbar-left {
@@ -15,18 +16,13 @@
   align-items: center;
 }
 
-.navbar-toggle {
+.navbar-toggle, .navbar-fullscreen {
   background: none;
   border: none;
-  color: #ffffff;
+  color: #0877c2;
   font-size: 1.5rem;
   cursor: pointer;
   margin-right: 1rem;
-}
-
-.navbar-title {
-  font-size: 1.2rem;
-  font-weight: bold;
 }
 
 .navbar-right {
@@ -36,58 +32,77 @@
 
 .navbar-icon {
   font-size: 1.2rem;
-  margin-right: 1.5rem;
+  margin-right: 1rem;
   cursor: pointer;
+  color: #0877c2;
+  transition: color 0.3s ease;
+}
+
+.navbar-icon:hover {
+  color: #0d8de2; /* Color al hacer hover */
 }
 
 .navbar-user {
   display: flex;
   align-items: center;
   position: relative;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+  user-select: none;
 }
 
-.navbar-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-right: 0.5rem;
+.navbar-user:hover {
+  background-color: #d0d1d159; /* Color de fondo al hacer hover */
 }
 
 .navbar-username {
-  margin-right: 0.5rem;
-  cursor: pointer;
+  font-weight: bold;
+  margin-right: 0.3rem;
+  color: #0877c2;
+  text-decoration: none;
+  user-select: none;
+}
+
+.username-caret {
+  font-size: 0.8rem;
+  color: #0877c2;
 }
 
 .navbar-dropdown {
-  display: none;
+  display: block;
   position: absolute;
   top: 100%;
   right: 0;
   background-color: #ffffff;
-  color: #343a40;
-  border-radius: 4px;
+  color: #444;
+  border-radius: 8px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   width: 150px;
   padding: 0.5rem 0;
-}
-
-.navbar-user:hover .navbar-dropdown {
-  display: block;
+  font-size: 0.9rem;
+  text-align: left;
+  z-index: 100;
 }
 
 .navbar-dropdown a {
   display: flex;
   align-items: center;
   padding: 0.5rem 1rem;
-  color: #343a40;
+  color: #444;
   text-decoration: none;
-  font-size: 0.9rem;
+  transition: background 0.2s;
 }
 
 .navbar-dropdown a:hover {
-  background-color: #f8f9fa;
+  background-color: #f0f0f0;
 }
 
-.navbar-dropdown a i {
-  margin-right: 0.5rem;
+.logout-link {
+  color: #ff4d4d;
+}
+
+.logout-link i {
+  color: #ff4d4d;
 }

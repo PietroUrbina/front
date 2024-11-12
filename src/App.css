@@ -1,74 +1,61 @@
-/* General Layout */
-.App {
+/* Contenedor principal */
+.app-container {
   display: flex;
-  flex-direction: column;
   height: 100vh;
+  overflow: hidden;
 }
 
-/* Estructura principal debajo del Navbar */
-.app-body {
-  display: flex;
-  height: calc(100vh - 60px); /* Altura total menos el navbar */
-}
-
-/* Navbar */
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 60px; /* Altura del navbar */
-  background-color: #343a40;
-  color: #ffffff;
-  z-index: 1000;
-  display: flex;
-  justify-content: space-between;
+.app-container.login-mode {
+  justify-content: center;
   align-items: center;
-  padding: 0 20px;
-  box-sizing: border-box;
+  background-color: #f5f8ff;
 }
 
-/* Sidebar */
-.sidebar {
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* Sidebar fijo */
+.sidebar-container {
   width: 250px;
   background-color: #343a40;
   color: #ffffff;
-  padding-top: 20px;
-  overflow-y: auto;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
 }
 
-/* Contenedor del contenido principal */
-/* Asegúrate de que el div content ocupa todo el espacio disponible */
-.content {
+/* Contenedor principal para navbar y contenido */
+.main-container {
+  display: flex;
+  flex-direction: column;
   flex-grow: 1;
-  padding: 20px; /* Este padding crea el espacio dentro del content */
-  background-color: #f0101000;
-  overflow-y: auto;
-  box-sizing: border-box;
+  margin-left: 250px;
 }
-.content.full-width {
+
+.main-container.full-width {
   margin-left: 0;
 }
 
-/* Estilos para el contenedor de la tabla */
-.table-container {
-  width: 100%; /* Ocupa el ancho completo del div content */
-  background-color: #ffffff; /* Opcional, para diferenciar la tabla */
-  overflow-x: auto; /* Habilita desplazamiento horizontal en la tabla si es necesario */
-  padding: 0;
-  margin: 0; /* Elimina cualquier margen adicional */
+/* Navbar fijo en la parte superior */
+.navbar-container {
+  height: 60px;
+  background-color: #007bff;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
 }
 
-/* Elimina el margen cuando el sidebar está oculto (para dispositivos móviles) */
-.content.full-width {
-  margin: 2px 2px 2px 2px;
-  /* Asegura el mismo margen en todos los lados, incluso en dispositivos más pequeños */
+/* Contenedor del área de trabajo */
+.content-container {
+  flex-grow: 1;
+  background-color: #f5f5f5;
+  padding: 20px;
+  overflow-y: auto;
 }
-
-/* Ajuste para pantallas pequeñas */
-@media (max-width: 768px) {
-  .content {
-    margin: 1cm; /* Reduce el margen en dispositivos móviles */
-  }
-}
-

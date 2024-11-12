@@ -141,7 +141,7 @@ const CompShowProducts = () => {
                             <td>{producto.nombre}</td>
                             <td>{producto.descripcion}</td>
                             <td>{producto.categoria ? producto.categoria.nombre_categoria : 'Sin Categoría'}</td>
-                            <td>{producto.costo}</td>
+                            <td>S/{producto.costo}</td>
                             <td>{producto.fecha_vencimiento}</td>
                             <td>
                                 <img 

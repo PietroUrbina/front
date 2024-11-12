@@ -1,0 +1,97 @@
+/* Contenedor principal */
+.dashboard {
+    display: grid;
+    gap: 1rem;
+    padding: 1rem;
+    grid-template-columns: 1fr;
+  }
+  
+  /* Header */
+  .dashboard-header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .card {
+    flex: 1;
+    min-width: 150px;
+    background-color: #f0f4f8;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  .card .icon {
+    font-size: 2rem;
+  }
+  
+  /* Tabla de artículos más vendidos */
+  .top-selling {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+  }
+  
+  .top-selling table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .top-selling th, .top-selling td {
+    padding: 0.5rem;
+    text-align: left;
+  }
+  
+  /* Resumen de ventas */
+  .sales-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .sales-card {
+    flex: 1;
+    min-width: 150px;
+    background-color: #f0f4f8;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  .sales-card .icon {
+    font-size: 2rem;
+  }
+  
+  /* Sección de gráficos */
+  .charts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .chart-card {
+    flex: 1;
+    min-width: 200px;
+    background-color: #ffffff;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  /* Responsividad para pantallas pequeñas */
+  @media (max-width: 768px) {
+    .dashboard-header,
+    .sales-summary,
+    .charts {
+      flex-direction: column;
+    }
+  
+    .card,
+    .sales-card,
+    .chart-card {
+      min-width: 100%;
+    }
+  }
+  

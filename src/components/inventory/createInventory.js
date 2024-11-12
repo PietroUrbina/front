@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';  // Importar toast
-import 'react-toastify/dist/ReactToastify.css'; // Importar estilos de toastify
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Select from 'react-select';
 
 // URIs para los productos e inventarios
@@ -17,11 +17,13 @@ const CompCreateInventories = () => {
   const [unidad_medida, setUnidadMedida] = useState('');
   const [fecha_movimiento, setFechaMovimiento] = useState('');
   const [productos, setProductos] = useState([]);
-  const [productDetails, setProductDetails] = useState(null); // Estado para almacenar los detalles del producto seleccionado
+  const [productDetails, setProductDetails] = useState(null);
   const navigate = useNavigate();
 
-  // Obtener los productos al cargar el componente
+  // Obtener la fecha actual en formato ISO y setearla como fecha de movimiento por defecto
   useEffect(() => {
+    const currentDate = new Date().toISOString().split('T')[0]; // Formato 'YYYY-MM-DD'
+    setFechaMovimiento(currentDate);
     getProductos();
   }, []);
 
@@ -41,23 +43,19 @@ const CompCreateInventories = () => {
     }
   };
 
-  // Manejar el cambio de producto
   const handleProductChange = (producto) => {
     setSelectedProduct(producto);
     if (producto) {
-      // Actualizar los detalles del producto seleccionado
       setProductDetails({
         categoria: producto.categoria,
         costo: producto.costo,
         fecha_vencimiento: producto.fecha_vencimiento || 'Sin fecha'
       });
     } else {
-      // Si no hay producto seleccionado, limpiar los detalles
       setProductDetails(null);
     }
   };
 
-  // Procedimiento para guardar el nuevo inventario
   const guardar = async (e) => {
     e.preventDefault();
 
@@ -75,7 +73,7 @@ const CompCreateInventories = () => {
         unidad_medida,
         fecha_movimiento
       });
-      toast.success('Inventario registrado con éxito');  // Mostrar éxito
+      toast.success('Inventario registrado con éxito');
       navigate('/inventarios');
     } catch (error) {
       toast.error('Error al crear el inventario');
@@ -168,15 +166,14 @@ const CompCreateInventories = () => {
                   />
                 </div>
 
-                {/* Fecha de Movimiento */}
+                {/* Fecha de Movimiento (automática y desactivada) */}
                 <div className="mb-3">
                   <label className="form-label">Fecha de Movimiento</label>
                   <input
                     value={fecha_movimiento}
-                    onChange={(e) => setFechaMovimiento(e.target.value)}
                     type="date"
                     className="form-control"
-                    required
+                    disabled // Desactivar el campo para que no pueda ser editado
                   />
                 </div>
 

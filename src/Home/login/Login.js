@@ -36,7 +36,7 @@ const Login = ({ actualizarUsuario }) => {
         showErrorToast('Contraseña Incorrecta');
       } else if (error.response && error.response.status === 404) {
         setError('El usuario no existe');
-        showErrorToast('El usuario no existe');
+        showErrorToast('Usuario y contraseña incorrecto, o el usuario no existe');
       } else {
         setError('Error desconocido');
       }

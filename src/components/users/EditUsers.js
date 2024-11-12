@@ -1,12 +1,13 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import Select from 'react-select';
-import { toast } from 'react-toastify';  // Importar toast para notificaciones
-import 'react-toastify/dist/ReactToastify.css'; // Importar estilos de toastify
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const URI = 'http://localhost:8000/usuarios/';
 
 const CompEditUser = ({ userId, onClose }) => {
+  const [nombreUsuario, setNombreUsuario] = useState(''); // Estado para el nombre de usuario
   const [rol, setRol] = useState('');
   const [roles] = useState([
     { value: 'Administrador', label: 'Administrador' },
@@ -19,6 +20,7 @@ const CompEditUser = ({ userId, onClose }) => {
     try {
       const res = await axios.get(`${URI}${userId}`);
       const userData = res.data;
+      setNombreUsuario(userData.nombre_usuario); // Setear el nombre de usuario
       setRol(userData.rol);
     } catch (error) {
       console.error('Error al obtener el usuario:', error);
@@ -28,24 +30,33 @@ const CompEditUser = ({ userId, onClose }) => {
 
   useEffect(() => {
     getUsuarioById();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await axios.put(`${URI}${userId}`, { rol });
-      toast.success('Rol actualizado con éxito');
+      await axios.put(`${URI}${userId}`, { nombre_usuario: nombreUsuario, rol }); // Añadir nombre_usuario
+      toast.success('Usuario actualizado con éxito');
       onClose(); // Cerrar el modal y actualizar la lista
     } catch (error) {
-      console.error('Error al actualizar el rol del usuario:', error);
-      toast.error('Error al actualizar el rol');
+      console.error('Error al actualizar el usuario:', error);
+      toast.error('Error al actualizar el usuario');
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
+      <div className="mb-3">
+        <label className="form-label">Nombre de Usuario</label>
+        <input
+          type="text"
+          className="form-control"
+          value={nombreUsuario}
+          onChange={(e) => setNombreUsuario(e.target.value)}
+          required
+        />
+      </div>
       <div className="mb-3">
         <label className="form-label">Rol</label>
         <Select

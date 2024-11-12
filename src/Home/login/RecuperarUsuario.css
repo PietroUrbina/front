@@ -1,102 +1,131 @@
-/* Estilos generales para centrar el formulario */
+/* Contenedor principal centrado y estilizado */
 .recuperar-container {
-  width: 100%;
-  max-width: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f4f6f8;
   padding: 20px;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
 }
 
+/* Caja del formulario estilizada */
+.form-content {
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  position: relative;
+}
+
+/* Botón de cierre */
 .cancel-button {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: none;
+  font-size: 18px;
+  color: #333;
   border: none;
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #cc0d0d;
+  background: none;
   cursor: pointer;
 }
 
-.cancel-button:hover {
-  color: #dc3545; /* Cambia a rojo cuando el mouse pasa por encima */
-}
-
+/* Título del formulario */
 h2 {
-  text-align: center;
   font-size: 1.5rem;
-  margin-bottom: 20px;
+  margin-bottom: 1rem;
+  color: #333;
 }
 
+/* Descripción del formulario */
 p {
-  text-align: center;
-  font-size: 1rem;
-  margin-bottom: 20px;
+  font-size: 0.95rem;
   color: #666;
+  margin-bottom: 1.5rem;
 }
 
+/* Estilos de entrada de correo */
 .input-container {
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
+  text-align: left;
 }
 
 .input-container label {
   display: block;
   font-size: 0.9rem;
-  margin-bottom: 5px;
   color: #333;
+  margin-bottom: 0.5rem;
 }
 
 .input-container input {
   width: 100%;
-  padding: 10px;
-  font-size: 1rem;
+  padding: 0.8rem;
   border-radius: 5px;
   border: 1px solid #ddd;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s ease;
 }
 
+.input-container input:focus {
+  border-color: #007bff;
+}
+
+/* Botón de enviar y regresar */
 .recuperar-button {
   width: 100%;
-  padding: 10px;
-  background-color: #007bff;
-  color: #fff;
+  padding: 0.8rem;
   border: none;
   border-radius: 5px;
-  cursor: pointer;
   font-size: 1rem;
-  transition: background-color 0.3s;
+  font-weight: bold;
+  color: #fff;
+  background-color: #007bff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
 }
 
 .recuperar-button:hover {
   background-color: #0056b3;
 }
 
+/* Botón de regresar */
 .regresar-button {
   background-color: #dc3545;
 }
 
-.success-message {
-  margin-top: 15px;
-  color: green;
+.regresar-button:hover {
+  background-color: #c82333;
+}
+
+/* Mensajes de éxito y error */
+.success-message, .error-message {
+  font-size: 0.9rem;
+  padding: 0.8rem;
+  border-radius: 5px;
+  margin-top: 1rem;
   text-align: center;
+}
+
+.success-message {
+  color: #28a745;
+  background-color: #e9f7ec;
+  border: 1px solid #28a745;
 }
 
 .error-message {
-  margin-top: 15px;
-  color: red;
-  text-align: center;
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #dc3545;
 }
 
-/* Estilo responsivo */
-@media (max-width: 768px) {
-  .recuperar-container {
-    width: 90%;
-    padding: 10px;
-  }
+/* Loader centrado */
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
 }
