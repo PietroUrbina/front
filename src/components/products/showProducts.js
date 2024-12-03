@@ -70,11 +70,11 @@ const CompShowProducts = () => {
         doc.autoTable({
             head: [['Nombre', 'Descripcion', 'Categoria', 'Costo', 'Fecha de Vencimiento', 'Estado']],
             body: productos.map(producto => [
-                producto.nombre,
+                producto.nombre_producto,
                 producto.descripcion,
                 producto.categoria ? producto.categoria.nombre_categoria : 'Sin Categoría',
                 producto.costo,
-                producto.fecha_vencimiento,
+                producto.fecha_vencimiento || 'No tiene',
                 producto.estado === 'activo' ? 'Activo' : 'Inactivo'
             ])
         });
@@ -83,7 +83,7 @@ const CompShowProducts = () => {
     };
 
     const filteredProducts = productos.filter(producto =>
-        producto.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+        producto.nombre_producto.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const indexOfLastProduct = currentPage * productsPerPage;
@@ -129,6 +129,7 @@ const CompShowProducts = () => {
                             <th>Descripcion</th>
                             <th>Categoria</th>
                             <th>Costo</th>
+                            <th>Precio</th>
                             <th>Fecha de Vencimiento</th>
                             <th>Imagen</th>
                             <th>Estado</th>
@@ -138,15 +139,16 @@ const CompShowProducts = () => {
                     <tbody>
                     {currentProducts.map(producto => (
                         <tr key={producto.id}>
-                            <td>{producto.nombre}</td>
+                            <td>{producto.nombre_producto}</td>
                             <td>{producto.descripcion}</td>
                             <td>{producto.categoria ? producto.categoria.nombre_categoria : 'Sin Categoría'}</td>
-                            <td>S/{producto.costo}</td>
-                            <td>{producto.fecha_vencimiento}</td>
+                            <td>S/{producto.precio_compra}</td>
+                            <td>S/{producto.precio_venta}</td>
+                            <td>{producto.fecha_vencimiento || 'No tiene'}</td>
                             <td>
                                 <img 
                                     src={producto.imagen} 
-                                    alt={producto.nombre} 
+                                    alt={producto.nombre_producto} 
                                     style={{ width: '100px', height: 'auto' }}
                                 />
                             </td>

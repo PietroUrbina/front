@@ -1,17 +1,18 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';  // Importar toast
+import { toast } from 'react-toastify'; // Importar toast
 import 'react-toastify/dist/ReactToastify.css'; // Importar estilos de toastify
 
 const URI = 'http://localhost:8000/productos/';
 const CATEGORIAS_URI = 'http://localhost:8000/categorias/'; // URI para obtener las categorías
 
 const CompCreateProducts = () => {
-  const [nombre, setNombre] = useState('');
+  const [nombre_producto, setNombreProducto] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [id_categoria, setIdCategoria] = useState('');
-  const [costo, setCosto] = useState('');
+  const [precio_compra, setPrecioCompra] = useState('');
+  const [precio_venta, setPrecioVenta] = useState('');
   const [fecha_vencimiento, setFechaVencimiento] = useState(null);
   const [imagen, setImagen] = useState('');
   const [categorias, setCategorias] = useState([]); // Estado para las categorías
@@ -22,8 +23,9 @@ const CompCreateProducts = () => {
     const obtenerCategorias = async () => {
       try {
         const response = await axios.get(CATEGORIAS_URI);
-        setCategorias(response.data); // Suponiendo que la respuesta es un array de categorías
+        setCategorias(response.data); 
       } catch (error) {
+        toast.error('Error al cargar las categorías');
         console.error('Error al cargar las categorías:', error);
       }
     };
@@ -34,22 +36,31 @@ const CompCreateProducts = () => {
   // Procedimiento para guardar el nuevo Producto
   const guardar = async (e) => {
     e.preventDefault();
+  
+    if (!id_categoria) {
+      toast.error('Debe seleccionar una categoría.');
+      return;
+    }
+  
     const productoData = {
-      nombre,
+      nombre_producto,
       descripcion,
-      id_categoria, // Asegúrate de que el id_categoria se envía correctamente
-      costo,
-      fecha_vencimiento: fecha_vencimiento ? fecha_vencimiento : null,
-      imagen
+      id_categoria,
+      precio_compra,
+      precio_venta,
+      fecha_vencimiento: fecha_vencimiento || null,
+      imagen: imagen || null
     };
-
+  
+    console.log('Datos enviados al backend:', productoData); // Verifica el contenido
+  
     try {
       await axios.post(URI, productoData);
-      toast.success('Inventario registrado con éxito');  // Mostrar éxito
+      toast.success('Producto registrado con éxito');
       navigate('/productos');
     } catch (error) {
-      toast.error('Error al crear el inventario');
-      console.error('Error al crear el producto:', error);
+      toast.error('Error al crear el producto');
+      console.error('Error al crear el producto:', error.response?.data || error.message);
     }
   };
 
@@ -70,8 +81,8 @@ const CompCreateProducts = () => {
                 <div className="mb-3">
                   <label className="form-label">Nombre del Producto</label>
                   <input
-                    value={nombre}
-                    onChange={(e) => setNombre(e.target.value)}
+                    value={nombre_producto}
+                    onChange={(e) => setNombreProducto(e.target.value)}
                     type="text"
                     className="form-control"
                     required
@@ -90,23 +101,39 @@ const CompCreateProducts = () => {
                   <label className="form-label">Categoría</label>
                   <select
                     value={id_categoria}
-                    onChange={(e) => setIdCategoria(e.target.value)}
+                    onChange={(e) => setIdCategoria(Number(e.target.value))}
                     className="form-control"
                     required
                   >
                     <option value="">Selecciona una categoría</option>
-                    {categorias.map((categoria) => (
-                      <option key={categoria.id} value={categoria.id}>
-                        {categoria.nombre_categoria} {/* Asegúrate de que esto coincide con el atributo de nombre en tu modelo */}
+                    {categorias.length > 0 ? (
+                      categorias.map((categoria) => (
+                        <option key={categoria.id} value={categoria.id}>
+                          {categoria.nombre_categoria} {/* Ajuste según el modelo */}
+                        </option>
+                      ))
+                    ) : (
+                      <option value="" disabled>
+                        Cargando categorías...
                       </option>
-                    ))}
+                    )}
                   </select>
                 </div>
                 <div className="mb-3">
                   <label className="form-label">Costo</label>
                   <input
-                    value={costo}
-                    onChange={(e) => setCosto(e.target.value)}
+                    value={precio_compra}
+                    onChange={(e) => setPrecioCompra(e.target.value)}
+                    type="number"
+                    className="form-control"
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Precio</label>
+                  <input
+                    value={precio_venta}
+                    onChange={(e) => setPrecioVenta(e.target.value)}
                     type="number"
                     className="form-control"
                     required
@@ -128,7 +155,6 @@ const CompCreateProducts = () => {
                     onChange={(e) => setImagen(e.target.value)}
                     type="text"
                     className="form-control"
-                    required
                   />
                 </div>
                 <div className="form-group text-center">
