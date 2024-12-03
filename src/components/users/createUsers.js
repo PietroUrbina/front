@@ -41,7 +41,7 @@ const CompCreateUser = () => {
       const res = await axios.get(URI_EMPLEADOS);
       const empleadosOptions = res.data.map(empleado => ({
         value: empleado.id,
-        label: empleado.nombre_empleado
+        label: empleado.nombre_completo
       }));
       setEmpleados(empleadosOptions);
     } catch (error) {
@@ -109,6 +109,18 @@ const CompCreateUser = () => {
             </div>
             <div className="card-body">
               <form onSubmit={handleSubmit}>
+              <div className="mb-3">
+                  <label className="form-label">Empleado</label>
+                  <Select
+                    options={empleados}
+                    value={empleados.find(option => option.value === id_empleado)}
+                    onChange={(selectedOption) => setIdEmpleado(selectedOption?.value)}
+                    placeholder="Selecciona un empleado"
+                    isClearable
+                    isSearchable
+                    required
+                  />
+                </div>
                 <div className="mb-3">
                   <label className="form-label">Nombre de Usuario</label>
                   <input
@@ -179,18 +191,6 @@ const CompCreateUser = () => {
                     value={roles.find(option => option.value === rol)}
                     onChange={(selectedOption) => setRol(selectedOption?.value)}
                     placeholder="Selecciona un rol"
-                    isClearable
-                    isSearchable
-                    required
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Empleado</label>
-                  <Select
-                    options={empleados}
-                    value={empleados.find(option => option.value === id_empleado)}
-                    onChange={(selectedOption) => setIdEmpleado(selectedOption?.value)}
-                    placeholder="Selecciona un empleado"
                     isClearable
                     isSearchable
                     required

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -16,7 +16,7 @@ const CompEditUser = ({ userId, onClose }) => {
   ]);
 
   // Función para obtener el usuario por ID
-  const getUsuarioById = async () => {
+  const getUsuarioById = useCallback(async () => {
     try {
       const res = await axios.get(`${URI}${userId}`);
       const userData = res.data;
@@ -26,11 +26,11 @@ const CompEditUser = ({ userId, onClose }) => {
       console.error('Error al obtener el usuario:', error);
       toast.error('Error al cargar los datos del usuario');
     }
-  };
+  }, [userId]);
 
   useEffect(() => {
     getUsuarioById();
-  }, [userId]);
+  }, [getUsuarioById]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -53,7 +53,7 @@ const CompShowUsers = () => {
     };
 
     const filteredUsuarios = usuarios.filter(usuario =>
-        usuario.nombre_usuario.toLowerCase().includes(searchTerm.toLowerCase())
+        usuario.nombre_usuario?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const indexOfLastUsuarios = currentPage * UsuariosPerPage;
@@ -118,18 +118,18 @@ const CompShowUsers = () => {
                 <table className="table">
                     <thead>
                         <tr>
+                            <th>Empleado</th>
                             <th>Nombre de Usuario</th>
                             <th>Rol</th>
-                            <th>Empleado</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {currentUsuarios.map((usuario) => (
                             <tr key={usuario.id}>
+                                <td>{usuario.empleado?.nombre_completo || 'No asignado'}</td>
                                 <td>{usuario.nombre_usuario}</td>
                                 <td>{usuario.rol}</td>
-                                <td>{usuario.empleado?.nombre_empleado || 'No asignado'}</td>
                                 <td>
                                     <div className="actions">
                                         <Button
