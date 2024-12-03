@@ -1,38 +1,44 @@
 import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';  // Importar toast para notificaciones
-import 'react-toastify/dist/ReactToastify.css'; // Importar estilos de toastify
+import { ring2 } from 'ldrs'; // Importar el loader
+import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
+
+ring2.register(); // Registrar el loader
 
 const URI = 'http://localhost:8000/clientes/';
-const RENIEC_URI = 'http://localhost:8000/clientes/reniec'; // Asegúrate de que la ruta es correcta
+const RENIEC_URI = 'http://localhost:8000/clientes/reniec';
 
 const CompCreateCustomers = () => {
   const [dni, setDni] = useState('');
-  const [nombre, setNombre] = useState('');
-  const [apellido, setApellido] = useState('');
+  const [nombre_completo, setNombreCompleto] = useState('');
   const [direccion, setDireccion] = useState('');
   const [email, setEmail] = useState('');
   const [telefono, setTelefono] = useState('');
-  const [fecha_nacimiento, setFechaNacimiento] = useState('');
-  const [sexo, setSexo] = useState('');
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [isReadOnly, setIsReadOnly] = useState(false);
+  const [loading, setLoading] = useState(false); // Estado para el loader
   const navigate = useNavigate();
 
-  // sexos definidos en el modelo de la base de datos
-  const sexos = ['Masculino', 'Femenino', 'Otro'];
-
   const obtenerDatosReniec = async () => {
+    setLoading(true); // Mostrar el loader
     try {
       const response = await axios.post(RENIEC_URI, { dni });
       if (response.data) {
-        setNombre(response.data.nombreCompleto);
-        setApellido(response.data.apellidosCompletos);
-        setIsReadOnly(true); // Hace los campos Nombre y Apellido de solo lectura
+        setNombreCompleto(response.data.nombreCompleto);
+        setIsReadOnly(true);
+        toast.success('Datos obtenidos correctamente');
+      } else {
+        setIsReadOnly(false);
+        toast.error('No se encontraron datos para este DNI');
       }
     } catch (error) {
+      setIsReadOnly(false);
+      toast.error('Error al obtener datos de la RENIEC');
       console.error('Error al obtener datos de la RENIEC', error);
+    } finally {
+      setLoading(false); // Ocultar el loader
     }
   };
 
@@ -40,9 +46,6 @@ const CompCreateCustomers = () => {
     const value = e.target.value;
     setDni(value);
     setButtonDisabled(value.length !== 8);
-    if (e.target.value.length <= 8) {
-      setDni(e.target.value);
-    }
   };
 
   const handleTelefonoChange = (e) => {
@@ -53,29 +56,29 @@ const CompCreateCustomers = () => {
 
   const guardar = async (e) => {
     e.preventDefault();
-    // Añadir validación antes de enviar
+
     if (dni.length !== 8) {
-      alert('El DNI debe tener exactamente 8 dígitos.');
+      toast.error('El DNI debe tener exactamente 8 dígitos.');
       return;
     }
-    if (telefono && telefono.length < 9) {
-      alert('El teléfono debe tener hasta 9 dígitos.');
+
+    if (email && !/\S+@\S+\.\S+/.test(email)) {
+      toast.error('El correo electrónico no es válido.');
       return;
     }
 
     try {
-      await axios.post(URI, { dni, nombre, apellido, direccion, email, telefono, fecha_nacimiento, sexo });
-      toast.success('Cliente creado con éxito');  // Mostrar notificación de éxito
+      await axios.post(URI, { dni, nombre_completo, direccion, email, telefono });
+      toast.success('Cliente creado con éxito');
       navigate('/clientes');
     } catch (error) {
-      toast.success('Error crear al cliente');
+      toast.error('Error al crear el cliente');
       console.error('Error al crear cliente', error);
     }
   };
 
-  // Función para manejar el evento de cancelación
   const cancelar = () => {
-    navigate('/clientes'); // Redirige al usuario a la lista de clientes
+    navigate('/clientes');
   };
 
   return (
@@ -94,24 +97,35 @@ const CompCreateCustomers = () => {
                     value={dni}
                     onChange={handleDniChange}
                     type="text"
-                    maxLength={8} 
+                    maxLength={8}
                     className="form-control"
                     required
                   />
-                  <button
-                    type="button"
-                    className="btn btn-success mt-2"
-                    onClick={obtenerDatosReniec}
-                    disabled={buttonDisabled}
-                  >
-                    Ver Persona
-                  </button>
+                  <div className="mt-2">
+                    <button
+                      type="button"
+                      className="btn btn-primary d-flex align-items-center gap-2"
+                      onClick={obtenerDatosReniec}
+                      disabled={buttonDisabled || loading}
+                    >
+                      <i className="fa-solid fa-address-card"></i> Consultar Persona
+                      {loading && (
+                        <l-ring-2
+                          size="30"
+                          color="white"
+                          stroke="5"
+                          speed="0.8"
+                          stroke-length="0.25"
+                        ></l-ring-2>
+                      )}
+                    </button>
+                  </div>
                 </div>
                 <div className="mb-3">
-                  <label className="form-label">Nombres del Cliente</label>
+                  <label className="form-label">Nombre Completo</label>
                   <input
-                    value={nombre}
-                    onChange={(e) => setNombre(e.target.value)}
+                    value={nombre_completo}
+                    onChange={(e) => setNombreCompleto(e.target.value)}
                     type="text"
                     className="form-control"
                     readOnly={isReadOnly}
@@ -119,24 +133,12 @@ const CompCreateCustomers = () => {
                   />
                 </div>
                 <div className="mb-3">
-                  <label className="form-label">Apellidos del Cliente</label>
-                  <input
-                    value={apellido}
-                    onChange={(e) => setApellido(e.target.value)}
-                    type="text"
-                    className="form-control"
-                    readOnly={isReadOnly}
-                    required
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Direccion</label>
+                  <label className="form-label">Dirección</label>
                   <input
                     value={direccion}
                     onChange={(e) => setDireccion(e.target.value)}
                     type="text"
                     className="form-control"
-                    required
                   />
                 </div>
                 <div className="mb-3">
@@ -146,7 +148,6 @@ const CompCreateCustomers = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     type="email"
                     className="form-control"
-                    required
                   />
                 </div>
                 <div className="mb-3">
@@ -157,34 +158,7 @@ const CompCreateCustomers = () => {
                     type="text"
                     maxLength={9}
                     className="form-control"
-                    required
                   />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Fecha de Nacimiento</label>
-                  <input
-                    value={fecha_nacimiento}
-                    onChange={(e) => setFechaNacimiento(e.target.value)}
-                    type="date"
-                    className="form-control"
-                    required
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Sexo</label>
-                  <select
-                    value={sexo}
-                    onChange={(e) => setSexo(e.target.value)}
-                    className="form-select"
-                    required
-                  >
-                    <option value="">Selecciona un sexo</option>
-                    {sexos.map((sexoOption, index) => (
-                      <option key={index} value={sexoOption}>
-                        {sexoOption}
-                      </option>
-                    ))}
-                  </select>
                 </div>
                 <div className="form-group text-center">
                   <button type="submit" className="btn btn-primary mr-4 mx-4">Guardar</button>

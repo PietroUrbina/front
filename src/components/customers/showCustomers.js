@@ -68,9 +68,9 @@ const CompShowCustomers = () => {
     };
 
     const filteredClientes = clientes.filter(cliente =>
-        cliente.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        cliente.apellido.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        cliente.dni.includes(searchTerm)
+        cliente.nombre_completo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cliente.dni?.includes(searchTerm) ||
+        cliente.email?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const indexOfLastCustomer = currentPage * customersPerPage;
@@ -102,13 +102,10 @@ const CompShowCustomers = () => {
                     <thead>
                         <tr>
                             <th>DNI</th>
-                            <th>Nombres</th>
-                            <th>Apellidos</th>
-                            <th>Direccion</th>
+                            <th>Nombres Completos</th>
+                            <th>Dirección</th>
                             <th>Email</th>
                             <th>Teléfono</th>
-                            <th>Fecha de Nacimiento</th>
-                            <th>Sexo</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -116,13 +113,10 @@ const CompShowCustomers = () => {
                         {currentCustomers.map((cliente) => (
                             <tr key={cliente.id}>
                                 <td>{cliente.dni}</td>
-                                <td>{cliente.nombre}</td>
-                                <td>{cliente.apellido}</td>
-                                <td>{cliente.direccion}</td>
-                                <td>{cliente.email}</td>
-                                <td>{cliente.telefono}</td>
-                                <td>{cliente.fecha_nacimiento}</td>
-                                <td>{cliente.sexo}</td>
+                                <td>{cliente.nombre_completo}</td>
+                                <td>{cliente.direccion || 'No especificado'}</td>
+                                <td>{cliente.email || 'No especificado'}</td>
+                                <td>{cliente.telefono || 'No especificado'}</td>
                                 <td>
                                     <Link to={`/clientes/edit/${cliente.id}`} className='btn btn-info'>
                                         <i className="fa-solid fa-pen-to-square"></i>
