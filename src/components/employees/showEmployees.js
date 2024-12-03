@@ -62,7 +62,7 @@ const CompShowEmployees = () => {
     };
 
     const filteredEmpleados = empleados.filter(empleado =>
-        empleado.nombre_empleado.toLowerCase().includes(searchTerm.toLowerCase())
+        empleado.nombre_completo.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const indexOfLastEmpleados = currentPage * EmpleadosPerPage;
@@ -94,8 +94,7 @@ const CompShowEmployees = () => {
                     <thead>
                         <tr>
                             <th>DNI</th>
-                            <th>Nombres</th>
-                            <th>Apellidos</th>
+                            <th>Nombres Completo</th>
                             <th>Dirección</th>
                             <th>Teléfono</th>
                             <th>Email</th>
@@ -107,8 +106,7 @@ const CompShowEmployees = () => {
                         {currentEmpleados.map((empleado) => (
                             <tr key={empleado.id}>
                                 <td>{empleado.dni}</td>
-                                <td>{empleado.nombre_empleado}</td>
-                                <td>{empleado.apellido_empleado}</td>
+                                <td>{empleado.nombre_completo}</td>
                                 <td>{empleado.direccion}</td>
                                 <td>{empleado.telefono}</td>
                                 <td>{empleado.email}</td>

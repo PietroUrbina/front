@@ -8,8 +8,7 @@ const URI = 'http://localhost:8000/empleados/';
 
 const CompEditEmployees = () => {
     const [dni, setDni] = useState('');
-    const [nombre_empleado, setNombreEmpleado] = useState('');
-    const [apellido_empleado, setApellidoEmpleado] = useState('');
+    const [nombre_completo, setNombreCompletoEmpleado] = useState('');
     const [direccion, setDireccion] = useState('');
     const [telefono, setTelefono] = useState('');
     const [email, setEmail] = useState('');
@@ -24,8 +23,7 @@ const CompEditEmployees = () => {
                 const res = await axios.get(`${URI}${id}`);
                 if (res.data) {
                     setDni(res.data.dni || '');
-                    setNombreEmpleado(res.data.nombre_empleado || '');
-                    setApellidoEmpleado(res.data.apellido_empleado || '');
+                    setNombreCompletoEmpleado(res.data.nombre_completo || '');
                     setDireccion(res.data.direccion || '');
                     setTelefono(res.data.telefono || '');
                     setEmail(res.data.email || '');
@@ -48,7 +46,7 @@ const CompEditEmployees = () => {
                 telefono,
                 email
             });
-            toast.success('Inventario actualizado con éxito');  // Mostrar notificación
+            toast.success('Empleado actualizado con éxito');  // Mostrar notificación
             navigate('/empleados');
         } catch (error) {
             toast.success('Error al actualizar el Empleado');
@@ -83,21 +81,10 @@ const CompEditEmployees = () => {
                                 </div>
                                 {/* Nombre solo lectura */}
                                 <div className="mb-3">
-                                    <label className="form-label">Nombres del Empleado</label>
+                                    <label className="form-label">Nombre Completo del Empleado</label>
                                     <input
-                                        value={nombre_empleado}
-                                        onChange={(e) => setNombreEmpleado(e.target.value)}
-                                        type="text"
-                                        className="form-control"
-                                        readOnly
-                                    />
-                                </div>
-                                {/* Apellido solo lectura */}
-                                <div className="mb-3">
-                                    <label className="form-label">Apellido del Empleado</label>
-                                    <input
-                                        value={apellido_empleado}
-                                        onChange={(e) => setApellidoEmpleado(e.target.value)}
+                                        value={nombre_completo}
+                                        onChange={(e) => setNombreCompletoEmpleado(e.target.value)}
                                         type="text"
                                         className="form-control"
                                         readOnly
