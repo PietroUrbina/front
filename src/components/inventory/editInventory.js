@@ -1,224 +1,212 @@
-import axios from 'axios';
-import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { toast } from 'react-toastify';  // Importar toast
-import 'react-toastify/dist/ReactToastify.css'; // Importar estilos de toastify
-import Select from 'react-select';
+import axios from "axios";
+import { useState, useEffect } from "react";
+import Select from "react-select";
+import { Button, Form, Card } from "react-bootstrap";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-// URIs para los productos e inventarios
-const URI_INVENTARIOS = 'http://localhost:8000/inventarios/';
-const URI_PRODUCTOS = 'http://localhost:8000/productos/';
+const URI_INVENTARIOS = "http://localhost:8000/inventarios";
+const URI_PRODUCTOS = "http://localhost:8000/productos";
 
-const CompEditInventories = () => {
-  const { id } = useParams();  // Obtener el ID de la URL
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [tipo_movimiento, setTipoMovimiento] = useState('');
-  const [stock, setStock] = useState('');
-  const [precio, setPrecio] = useState('');
-  const [unidad_medida, setUnidadMedida] = useState('');
-  const [fecha_movimiento, setFechaMovimiento] = useState('');
+const CompEditInventory = () => {
+  const { id } = useParams(); // ID del inventario a editar
   const [productos, setProductos] = useState([]);
-  const [loading, setLoading] = useState(true); // Estado para controlar la carga de datos
+  const [productoSeleccionado, setProductoSeleccionado] = useState(null);
+  const [unidad_medida, setUnidadMedida] = useState(""); // Unidad de medida seleccionada
+  const [stock, setStock] = useState(""); // Stock registrado
+  const [precio, setPrecio] = useState(""); // Precio registrado
+  const [fechaActualizacion] = useState(new Date().toLocaleString()); // Fecha actual automática
   const navigate = useNavigate();
 
-  // Obtener los productos al cargar el componente
-  useEffect(() => {
-    getProductos();
-    if (id) {
-      getInventarioById(id);  // Cargar el inventario para edición
-    }
-  }, [id]);
+  const unidadOptions = [
+    { value: "UNIDAD", label: "Unidad" },
+    { value: "BOTELLA", label: "Botella" },
+    { value: "COPA", label: "Copa" },
+    { value: "VASO", label: "Vaso" },
+    { value: "LATA", label: "Lata" },
+    { value: "SIXPACK", label: "Sixpack" },
+    { value: "VALDE", label: "Valde" },
+    { value: "CAJA", label: "Caja" },
+  ];
 
-  // Obtener todos los productos
-  const getProductos = async () => {
+  // Función para cargar los productos
+  const fetchProductos = async () => {
     try {
       const res = await axios.get(URI_PRODUCTOS);
-      const options = res.data.map(producto => ({
+      const productosData = res.data.map((producto) => ({
         value: producto.id,
-        label: producto.nombre,
-        categoria: producto.categoria?.nombre_categoria || 'Sin categoría',
-        costo: producto.costo,
-        fecha_vencimiento: producto.fecha_vencimiento
+        label: producto.nombre_producto,
+        categoria_nombre: producto.categoria?.nombre_categoria || "Sin categoría",
+        ...producto,
       }));
-      setProductos(options);
+      setProductos(productosData);
+      return productosData; // Devuelve la lista de productos
     } catch (error) {
-      console.error('Error al obtener los productos:', error);
+      console.error("Error al cargar productos:", error);
+      toast.error("Error al cargar productos.");
+      return [];
     }
   };
 
-  // Obtener un inventario por su ID
-  const getInventarioById = async (inventarioId) => {
+  // Función para cargar los datos del inventario
+  const fetchInventario = async (productosData) => {
     try {
-      const res = await axios.get(`${URI_INVENTARIOS}${inventarioId}`);
-      const inventario = res.data;  // Aquí ya no se usa [0] porque findOne devuelve un solo objeto
-
-      if (inventario && inventario.producto) {
-        setSelectedProduct({
-          value: inventario.id_producto,
-          label: inventario.producto.nombre || 'Producto no encontrado',  // Verificación adicional
-          categoria: inventario.producto.categoria?.nombre_categoria || 'Sin categoría',
-          costo: inventario.producto.costo || 0,
-          fecha_vencimiento: inventario.producto.fecha_vencimiento || 'Sin fecha'
-        });
-        setTipoMovimiento(inventario.tipo_movimiento || '');
-        setStock(inventario.stock || 0);
-        setPrecio(inventario.precio || 0);
-        setUnidadMedida(inventario.unidad_medida || '');
-        setFechaMovimiento(inventario.fecha_movimiento?.split('T')[0] || '');  // Verifica que la fecha exista
-      } else {
-        console.error("Inventario o producto no encontrado en la respuesta de la API", res.data);
-      }
-
-      setLoading(false);  // Termina de cargar los datos
+      const res = await axios.get(`${URI_INVENTARIOS}/${id}`);
+      const inventario = res.data;
+  
+      // Buscar el producto relacionado en la lista de productos
+      const productoRelacionado = productosData.find(
+        (producto) => producto.id === inventario.id_producto
+      );
+  
+      setProductoSeleccionado({
+        value: productoRelacionado?.id || null,
+        label: productoRelacionado?.nombre_producto || "Producto no encontrado",
+        categoria_nombre: productoRelacionado?.categoria_nombre || "Sin categoría",
+        ...productoRelacionado,
+      });
+  
+      // Cargar los valores del inventario
+      setUnidadMedida(inventario.unidad_medida || ""); // Unidad de medida existente
+      setStock(inventario.stock?.toString() || ""); // Convertimos a string para el input
+      setPrecio(inventario.precio?.toString() || inventario.producto?.precio_venta?.toString() || ""); // Aquí se asegura que se use el precio correcto
     } catch (error) {
-      console.error('Error al obtener el inventario:', error);
-      setLoading(false);  // Termina de cargar aunque haya error
+      console.error("Error al cargar el inventario:", error);
+      toast.error("Error al cargar el inventario.");
     }
   };
 
-  // Procedimiento para actualizar el inventario
-  const actualizar = async (e) => {
-    e.preventDefault();
-    if (!selectedProduct) {
-      toast.error("Selecciona un producto");
+  // useEffect para cargar los datos iniciales
+  useEffect(() => {
+    const fetchData = async () => {
+      const productosData = await fetchProductos(); // Carga productos primero
+      await fetchInventario(productosData); // Luego carga el inventario
+    };
+
+    fetchData();
+  }, [id]); // Ejecuta cada vez que cambia el ID
+
+  const handleUnidadMedidaChange = (selectedOption) => {
+    setUnidadMedida(selectedOption?.value || "");
+  };
+
+  const handleActualizarInventario = async () => {
+    if (!unidad_medida || !stock || !precio) {
+      toast.error("Por favor, completa todos los campos obligatorios.");
       return;
     }
 
     try {
-      // Realizar el PUT para actualizar el inventario
-      await axios.put(`${URI_INVENTARIOS}${id}`, {
-        id_producto: selectedProduct.value,
-        tipo_movimiento,
-        stock: parseInt(stock, 10),
-        precio: parseFloat(precio).toFixed(2),
+      await axios.put(`${URI_INVENTARIOS}/${id}`, {
         unidad_medida,
-        fecha_movimiento
+        stock: parseFloat(stock),
+        precio: parseFloat(precio),
+        fecha_actualizacion: new Date(), // Actualiza con la fecha actual
       });
-
-      // Mostrar mensaje de éxito
-      toast.success('Inventario actualizado con éxito');  // Mostrar notificación
-      // Redirigir a la lista de inventarios después de actualizar
-      navigate('/inventarios');
+      toast.success("Inventario actualizado exitosamente.");
+      navigate("/inventarios"); // Redirigir al listado de inventarios
     } catch (error) {
-      toast.error('Error al actualizar el inventario');
-      console.error('Error al actualizar el inventario:', error);
+      console.error(error);
+      toast.error("Error al actualizar el inventario.");
     }
   };
 
-  // Función para manejar el evento de cancelación
-  const cancelar = () => {
-    navigate('/inventarios');
-  };
-
-  if (loading) {
-    return <div>Cargando datos...</div>;  // Indicador de carga mientras los datos están siendo obtenidos
-  }
-
   return (
-    <div className="container mt-5">
-      <div className="row justify-content-center">
-        <div className="col-md-6">
-          <div className="card">
-            <div className="card-header">
-              <h3>Editar Inventario</h3>
-            </div>
-            <div className="card-body">
-              <form onSubmit={actualizar}>
-                {/* Selección de Producto - Deshabilitado */}
-                <div className="mb-3">
-                  <label className="form-label">Producto</label>
-                  <Select
-                    value={selectedProduct}
-                    options={productos}
-                    placeholder="Seleccionar producto"
-                    isDisabled={true} // Deshabilitamos la selección del producto
-                  />
-                </div>
+    <div className="container mt-4">
+      <h3>Editar Inventario</h3>
+      <Form>
+        <Form.Group className="mb-3">
+          <Form.Label>Producto</Form.Label>
+          <Select
+            options={productos}
+            value={productoSeleccionado}
+            isDisabled // El producto no se puede cambiar
+          />
+        </Form.Group>
 
-                {/* Mostrar la información del producto seleccionado */}
-                {selectedProduct && (
-                  <div className="product-info mt-3">
-                    <p><strong>Categoría:</strong> {selectedProduct.categoria}</p>
-                    <p><strong>Costo:</strong> {selectedProduct.costo}</p>
-                    <p><strong>Fecha de Vencimiento:</strong> {selectedProduct.fecha_vencimiento}</p>
-                  </div>
-                )}
+        {productoSeleccionado && (
+          <Card className="mb-3">
+            <Card.Body>
+              <Card.Title>Detalles del Producto</Card.Title>
+              <Card.Text>
+                <strong>Descripción:</strong>{" "}
+                {productoSeleccionado.descripcion || "Sin descripción"}
+              </Card.Text>
+              <Card.Text>
+                <strong>Categoría:</strong>{" "}
+                {productoSeleccionado.categoria_nombre || "Sin categoría"}
+              </Card.Text>
+              <Card.Text>
+                <strong>Costo:</strong> S/{productoSeleccionado.precio_compra}
+              </Card.Text>
+              <Card.Text>
+                <strong>Precio:</strong> S/{productoSeleccionado.precio_venta}
+              </Card.Text>
+              <Card.Text>
+                <strong>Fecha de Vencimiento:</strong>{" "}
+                {productoSeleccionado.fecha_vencimiento || "N/A"}
+              </Card.Text>
+            </Card.Body>
+          </Card>
+        )}
 
-                {/* Tipo de Movimiento - Deshabilitado */}
-                <div className="mb-3">
-                  <label className="form-label">Tipo de Movimiento</label>
-                  <select
-                    value={tipo_movimiento}
-                    onChange={(e) => setTipoMovimiento(e.target.value)}
-                    className="form-select"
-                    required
-                    disabled // Deshabilitamos el tipo de movimiento
-                  >
-                    <option value="Entrada">Entrada</option>
-                    <option value="Salida">Salida</option>
-                  </select>
-                </div>
+        <Form.Group className="mb-3">
+          <Form.Label>Unidad de Medida</Form.Label>
+          <Select
+            options={unidadOptions}
+            value={unidadOptions.find((option) => option.value === unidad_medida)}
+            onChange={handleUnidadMedidaChange}
+            placeholder="Selecciona la unidad de medida"
+            isClearable
+          />
+        </Form.Group>
 
-                {/* Stock - Editable */}
-                <div className="mb-3">
-                  <label className="form-label">Stock</label>
-                  <input
-                    value={stock}
-                    onChange={(e) => setStock(e.target.value)}
-                    type="number"
-                    className="form-control"
-                    required
-                  />
-                </div>
+        <Form.Group className="mb-3">
+          <Form.Label>Stock</Form.Label>
+          <Form.Control
+            type="number"
+            placeholder="Ingresa el stock"
+            value={stock}
+            onChange={(e) => setStock(e.target.value)}
+          />
+        </Form.Group>
 
-                {/* Precio - Editable */}
-                <div className="mb-3">
-                  <label className="form-label">Precio</label>
-                  <input
-                    value={precio}
-                    onChange={(e) => setPrecio(e.target.value)}
-                    type="number"
-                    className="form-control"
-                    required
-                  />
-                </div>
+        <Form.Group className="mb-3">
+          <Form.Label>Precio</Form.Label>
+          <Form.Control
+            type="number"
+            placeholder="Ingresa el precio"
+            value={precio}
+            onChange={(e) => setPrecio(e.target.value)}
+          />
+        </Form.Group>
 
-                {/* Unidad de Medida - Editable */}
-                <div className="mb-3">
-                  <label className="form-label">Unidad de Medida</label>
-                  <input
-                    value={unidad_medida}
-                    onChange={(e) => setUnidadMedida(e.target.value)}
-                    type="text"
-                    className="form-control"
-                    required
-                  />
-                </div>
+        <Form.Group className="mb-3">
+          <Form.Label>Fecha de Actualización</Form.Label>
+          <Form.Control
+            type="text"
+            value={new Date().toLocaleString()}
+            readOnly
+            className="bg-light"
+          />
+        </Form.Group>
 
-                {/* Fecha de Movimiento - Deshabilitado */}
-                <div className="mb-3">
-                  <label className="form-label">Fecha de Movimiento</label>
-                  <input
-                    value={fecha_movimiento}
-                    onChange={(e) => setFechaMovimiento(e.target.value)}
-                    type="date"
-                    className="form-control"
-                    required
-                    disabled // Deshabilitamos la fecha de movimiento
-                  />
-                </div>
-
-                <div className="form-group text-center">
-                  <button type="submit" className="btn btn-primary mr-4 mx-4">Actualizar</button>
-                  <button type="button" className="btn btn-danger" onClick={cancelar}>Cancelar</button>
-                </div>
-              </form>
-            </div>
-          </div>
+        <div className="d-flex justify-content-between">
+          <Button variant="primary" onClick={handleActualizarInventario}>
+            <i className="fa-solid fa-save"></i> Guardar
+          </Button>
+          <Button
+            variant="danger"
+            onClick={() => navigate("/inventarios")}
+            className="ms-3"
+          >
+            <i className="fa-solid fa-arrow-left"></i> Cancelar
+          </Button>
         </div>
-      </div>
+      </Form>
     </div>
   );
 };
 
-export default CompEditInventories;
+export default CompEditInventory;
