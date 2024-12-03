@@ -38,9 +38,11 @@ import CompShowCustomers from './components/customers/showCustomers';
 import CompCreateCustomers from './components/customers/createCustomers';
 import CompEditCustomers from './components/customers/editCustomers';
 
-import CompShowInventories from './components/inventory/showInventories';
-import CompCreateInventories from './components/inventory/createInventory';
-import CompEditInventories from './components/inventory/editInventory';
+import CompShowInventory from './components/inventory/showInventory';
+import CompCreateInventory from './components/inventory/createInventory';
+import CompEditInventory from './components/inventory/editInventory';
+
+import CompShowKardex from './components/kardex/showKardex';
 
 import CompVenta from './components/ventas/ventas';
 import CompVentasRealizadas from './components/ventasRealizadas/ventasRealizadas';
@@ -101,10 +103,6 @@ function App() {
                 <Route path="/empleados/create" element={<CompCreateEmployees />} />
                 <Route path="/empleados/edit/:id" element={<CompEditEmployees />} />
 
-                <Route path="/box" element={<CompShowBox />} />
-                <Route path="/box/create" element={<CompCreateBox />} />
-                <Route path="/box/edit/:id" element={<CompEditBox />} />
-
                 <Route path="/categorias" element={<CompShowCategorias />} />
                 <Route path="/categorias/create" element={<CompCreateCategorias />} />
                 <Route path="/categorias/edit/:id" element={<CompEditCategorias />} />
@@ -117,12 +115,18 @@ function App() {
                 <Route path="/clientes/create" element={<CompCreateCustomers />} />
                 <Route path="/clientes/edit/:id" element={<CompEditCustomers />} />
 
-                <Route path="/inventarios" element={<CompShowInventories />} />
-                <Route path="/inventarios/create" element={<CompCreateInventories />} />
-                <Route path="/inventarios/edit/:id" element={<CompEditInventories />} />
+                <Route path="/inventarios" element={<CompShowInventory />} />
+                <Route path="/inventarios/create" element={<CompCreateInventory />} />
+                <Route path="/inventarios/edit/:id" element={<CompEditInventory />} />
+
+                <Route path="/kardex/:id_producto" element={<CompShowKardex />} />
 
                 <Route path="/ventas" element={<CompVenta usuario={usuario} />} />
                 <Route path="/ventasRealizadas" element={<CompVentasRealizadas usuario={usuario} />} />
+
+                <Route path="/box" element={<CompShowBox />} />
+                <Route path="/box/create" element={<CompCreateBox />} />
+                <Route path="/box/edit/:id" element={<CompEditBox />} />
 
                 <Route path="/logout" element={<Logout actualizarUsuario={actualizarUsuario} />} />
               </Routes>

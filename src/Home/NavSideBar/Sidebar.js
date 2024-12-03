@@ -11,7 +11,7 @@ const Sidebar = ({ isMinimized }) => {
   return (
     <div className={`sidebar ${isMinimized ? 'minimized' : ''}`}>
       <div className="sidebar-logo">
-        <Link to="/usuarios">
+        <Link to="/Inicio">
           <img src={logo} alt="Logo" className="logo-image" />
         </Link>
       </div>
@@ -33,11 +33,6 @@ const Sidebar = ({ isMinimized }) => {
               <i className="fas fa-user-tie"></i> {!isMinimized && "Empleados"}
             </Link>
           </li>
-          <li className={isActive("/box") ? "active" : ""}>
-            <Link to="/box">
-              <i className="fas fa-box"></i> {!isMinimized && "Box"}
-            </Link>
-          </li>
           <li className={isActive("/clientes") ? "active" : ""}>
             <Link to="/clientes">
               <i className="fas fa-users"></i> {!isMinimized && "Clientes"}
@@ -46,7 +41,7 @@ const Sidebar = ({ isMinimized }) => {
           <div className="section-divider">Gestion Almacen</div>
           <li className={isActive("/categorias") ? "active" : ""}>
             <Link to="/categorias">
-              <i className="fas fa-layer-group"></i> {!isMinimized && "Categorías"}
+              <i className="fas fa-tags"></i> {!isMinimized && "Categorías"}
             </Link>
           </li>
           <li className={isActive("/productos") ? "active" : ""}>

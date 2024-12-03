@@ -28,7 +28,7 @@ const Login = ({ actualizarUsuario }) => {
       localStorage.setItem('token', token);
       localStorage.setItem('usuario', JSON.stringify(usuario));
       actualizarUsuario(usuario); // Actualizar usuario en App.js
-      navigate('/usuarios'); // Redirigir a la página de usuarios
+      navigate('/Inicio'); // Redirigir a la página de usuarios
     } catch (error) {
       console.error("Error en el inicio de sesión:", error);
       if (error.response && error.response.status === 401) {
