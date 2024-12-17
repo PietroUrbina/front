@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Select from "react-select";
 import { Button, Form, Card } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
@@ -10,13 +10,12 @@ const URI_INVENTARIOS = "http://localhost:8000/inventarios";
 const URI_PRODUCTOS = "http://localhost:8000/productos";
 
 const CompEditInventory = () => {
-  const { id } = useParams(); // ID del inventario a editar
+  const { id } = useParams();
   const [productos, setProductos] = useState([]);
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
-  const [unidad_medida, setUnidadMedida] = useState(""); // Unidad de medida seleccionada
-  const [stock, setStock] = useState(""); // Stock registrado
-  const [precio, setPrecio] = useState(""); // Precio registrado
-  const [fechaActualizacion] = useState(new Date().toLocaleString()); // Fecha actual automática
+  const [unidad_medida, setUnidadMedida] = useState("");
+  const [stock, setStock] = useState("");
+  const [precio, setPrecio] = useState("");
   const navigate = useNavigate();
 
   const unidadOptions = [
@@ -31,7 +30,7 @@ const CompEditInventory = () => {
   ];
 
   // Función para cargar los productos
-  const fetchProductos = async () => {
+  const fetchProductos = useCallback(async () => {
     try {
       const res = await axios.get(URI_PRODUCTOS);
       const productosData = res.data.map((producto) => ({
@@ -41,51 +40,54 @@ const CompEditInventory = () => {
         ...producto,
       }));
       setProductos(productosData);
-      return productosData; // Devuelve la lista de productos
+      return productosData;
     } catch (error) {
       console.error("Error al cargar productos:", error);
       toast.error("Error al cargar productos.");
       return [];
     }
-  };
+  }, []);
 
   // Función para cargar los datos del inventario
-  const fetchInventario = async (productosData) => {
-    try {
-      const res = await axios.get(`${URI_INVENTARIOS}/${id}`);
-      const inventario = res.data;
-  
-      // Buscar el producto relacionado en la lista de productos
-      const productoRelacionado = productosData.find(
-        (producto) => producto.id === inventario.id_producto
-      );
-  
-      setProductoSeleccionado({
-        value: productoRelacionado?.id || null,
-        label: productoRelacionado?.nombre_producto || "Producto no encontrado",
-        categoria_nombre: productoRelacionado?.categoria_nombre || "Sin categoría",
-        ...productoRelacionado,
-      });
-  
-      // Cargar los valores del inventario
-      setUnidadMedida(inventario.unidad_medida || ""); // Unidad de medida existente
-      setStock(inventario.stock?.toString() || ""); // Convertimos a string para el input
-      setPrecio(inventario.precio?.toString() || inventario.producto?.precio_venta?.toString() || ""); // Aquí se asegura que se use el precio correcto
-    } catch (error) {
-      console.error("Error al cargar el inventario:", error);
-      toast.error("Error al cargar el inventario.");
-    }
-  };
+  const fetchInventario = useCallback(
+    async (productosData) => {
+      try {
+        const res = await axios.get(`${URI_INVENTARIOS}/${id}`);
+        const inventario = res.data;
+
+        // Buscar el producto relacionado en la lista de productos
+        const productoRelacionado = productosData.find(
+          (producto) => producto.id === inventario.id_producto
+        );
+
+        setProductoSeleccionado({
+          value: productoRelacionado?.id || null,
+          label: productoRelacionado?.nombre_producto || "Producto no encontrado",
+          categoria_nombre: productoRelacionado?.categoria_nombre || "Sin categoría",
+          ...productoRelacionado,
+        });
+
+        // Asignar valores del inventario
+        setUnidadMedida(inventario.unidad_medida || "");
+        setStock(inventario.stock?.toString() || "");
+        setPrecio(inventario.precio?.toString() || ""); // Capturar el precio desde el inventario
+      } catch (error) {
+        console.error("Error al cargar el inventario:", error);
+        toast.error("Error al cargar el inventario.");
+      }
+    },
+    [id]
+  );
 
   // useEffect para cargar los datos iniciales
   useEffect(() => {
     const fetchData = async () => {
-      const productosData = await fetchProductos(); // Carga productos primero
-      await fetchInventario(productosData); // Luego carga el inventario
+      const productosData = await fetchProductos();
+      await fetchInventario(productosData);
     };
 
     fetchData();
-  }, [id]); // Ejecuta cada vez que cambia el ID
+  }, [fetchProductos, fetchInventario]);
 
   const handleUnidadMedidaChange = (selectedOption) => {
     setUnidadMedida(selectedOption?.value || "");
@@ -102,10 +104,10 @@ const CompEditInventory = () => {
         unidad_medida,
         stock: parseFloat(stock),
         precio: parseFloat(precio),
-        fecha_actualizacion: new Date(), // Actualiza con la fecha actual
+        fecha_actualizacion: new Date(),
       });
       toast.success("Inventario actualizado exitosamente.");
-      navigate("/inventarios"); // Redirigir al listado de inventarios
+      navigate("/inventarios");
     } catch (error) {
       console.error(error);
       toast.error("Error al actualizar el inventario.");
@@ -121,7 +123,7 @@ const CompEditInventory = () => {
           <Select
             options={productos}
             value={productoSeleccionado}
-            isDisabled // El producto no se puede cambiar
+            isDisabled
           />
         </Form.Group>
 
@@ -130,27 +132,24 @@ const CompEditInventory = () => {
             <Card.Body>
               <Card.Title>Detalles del Producto</Card.Title>
               <Card.Text>
-                <strong>Descripción:</strong>{" "}
-                {productoSeleccionado.descripcion || "Sin descripción"}
+                <strong>Descripción:</strong> {productoSeleccionado.descripcion || "Sin descripción"}
               </Card.Text>
               <Card.Text>
-                <strong>Categoría:</strong>{" "}
-                {productoSeleccionado.categoria_nombre || "Sin categoría"}
+                <strong>Categoría:</strong> {productoSeleccionado.categoria_nombre || "Sin categoría"}
               </Card.Text>
               <Card.Text>
                 <strong>Costo:</strong> S/{productoSeleccionado.precio_compra}
               </Card.Text>
               <Card.Text>
-                <strong>Precio:</strong> S/{productoSeleccionado.precio_venta}
+                <strong>Precio de Referencia:</strong> S/{productoSeleccionado.precio_venta}
               </Card.Text>
               <Card.Text>
-                <strong>Fecha de Vencimiento:</strong>{" "}
-                {productoSeleccionado.fecha_vencimiento || "N/A"}
+                <strong>Fecha de Vencimiento:</strong> {productoSeleccionado.fecha_vencimiento || "N/A"}
               </Card.Text>
             </Card.Body>
           </Card>
         )}
-
+        
         <Form.Group className="mb-3">
           <Form.Label>Unidad de Medida</Form.Label>
           <Select
@@ -161,7 +160,6 @@ const CompEditInventory = () => {
             isClearable
           />
         </Form.Group>
-
         <Form.Group className="mb-3">
           <Form.Label>Stock</Form.Label>
           <Form.Control
@@ -171,7 +169,6 @@ const CompEditInventory = () => {
             onChange={(e) => setStock(e.target.value)}
           />
         </Form.Group>
-
         <Form.Group className="mb-3">
           <Form.Label>Precio</Form.Label>
           <Form.Control
@@ -181,7 +178,6 @@ const CompEditInventory = () => {
             onChange={(e) => setPrecio(e.target.value)}
           />
         </Form.Group>
-
         <Form.Group className="mb-3">
           <Form.Label>Fecha de Actualización</Form.Label>
           <Form.Control
@@ -191,7 +187,6 @@ const CompEditInventory = () => {
             className="bg-light"
           />
         </Form.Group>
-
         <div className="d-flex justify-content-between">
           <Button variant="primary" onClick={handleActualizarInventario}>
             <i className="fa-solid fa-save"></i> Guardar

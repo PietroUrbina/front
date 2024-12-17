@@ -27,9 +27,6 @@ const CompCreateInventory = () => {
     { value: "COPA", label: "Copa" },
     { value: "VASO", label: "Vaso" },
     { value: "LATA", label: "Lata" },
-    { value: "SIXPACK", label: "Sixpack" },
-    { value: "VALDE", label: "Valde" },
-    { value: "CAJA", label: "Caja" },
   ];
 
   useEffect(() => {

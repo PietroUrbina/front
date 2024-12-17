@@ -20,6 +20,7 @@ const CompShowInventory = () => {
     const [showModal, setShowModal] = useState(false);
     const [selectedInventario, setSelectedInventario] = useState(null);
     const [kardexData, setKardexData] = useState([]);
+    const [precioInventario, setPrecioInventario] = useState(0); // Nuevo estado para el precio
     const [showKardexModal, setShowKardexModal] = useState(false);
 
     useEffect(() => {
@@ -46,7 +47,8 @@ const CompShowInventory = () => {
         try {
             const res = await axios.get(`${URI_KARDEX}/${id_inventario}`);
             if (res.status === 200) {
-                setKardexData(res.data);
+                setKardexData(res.data.movimientos); // Movimientos del Kardex
+                setPrecioInventario(res.data.precio); // Precio del inventario
                 setShowKardexModal(true);
             } else {
                 toast.error('No se encontraron movimientos en el Kardex para este inventario.');
@@ -66,10 +68,10 @@ const CompShowInventory = () => {
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit',
-            hour12: false, // Formato 24 horas
+            hour12: false,
         };
         return new Date(fecha).toLocaleString('es-PE', opciones);
-    };    
+    };
 
     // Filtrar inventarios por término de búsqueda
     const handleSearch = (e) => {
@@ -126,7 +128,7 @@ const CompShowInventory = () => {
             body: inventarios.map((inventario) => [
                 inventario.producto?.nombre_producto || 'Producto no encontrado',
                 inventario.stock,
-                `S/${parseFloat(inventario.producto?.precio_venta || 0).toFixed(2)}`,
+                `S/${parseFloat(inventario.precio || 0).toFixed(2)}`, // Mostrar precio del inventario
                 inventario.unidad_medida || 'N/A',
                 inventario.stock > 0 ? 'Activo' : 'Inactivo',
             ]),
@@ -153,7 +155,6 @@ const CompShowInventory = () => {
                     />
                 </div>
             </div>
-
             <div className="table-responsive">
                 <table className="table">
                     <thead>
@@ -172,9 +173,11 @@ const CompShowInventory = () => {
                             <tr key={inventario.id}>
                                 <td>{inventario.producto?.nombre_producto || 'Producto no encontrado'}</td>
                                 <td>
-                                    <span className={`chip stock ${getStockClass(inventario.stock)}`}>{inventario.stock}</span>
+                                    <span className={`chip stock ${getStockClass(inventario.stock)}`}>
+                                        {inventario.stock}
+                                    </span>
                                 </td>
-                                <td>S/{parseFloat(inventario.producto?.precio_venta || 0).toFixed(2)}</td>
+                                <td>S/{parseFloat(inventario.precio || 0).toFixed(2)}</td>
                                 <td>{inventario.unidad_medida || 'N/A'}</td>
                                 <td>{formatFecha(inventario.fecha_actualizacion)}</td>
                                 <td>
@@ -183,13 +186,19 @@ const CompShowInventory = () => {
                                     </span>
                                 </td>
                                 <td>
-                                    <button onClick={() => getKardex(inventario.id)} className="btn btn-warning">
+                                    <button
+                                        onClick={() => getKardex(inventario.id)}
+                                        className="btn btn-warning"
+                                    >
                                         <i className="fa-solid fa-clock"></i> Kardex
                                     </button>
                                     <Link to={`/inventarios/edit/${inventario.id}`} className="btn btn-info">
                                         <i className="fa-solid fa-pen-to-square"></i>
                                     </Link>
-                                    <button onClick={() => handleShowModal(inventario)} className="btn btn-danger">
+                                    <button
+                                        onClick={() => handleShowModal(inventario)}
+                                        className="btn btn-danger"
+                                    >
                                         <i className="fa-solid fa-trash"></i>
                                     </button>
                                 </td>
@@ -232,6 +241,7 @@ const CompShowInventory = () => {
                 show={showKardexModal}
                 onHide={() => setShowKardexModal(false)}
                 kardexData={kardexData}
+                precioInventario={precioInventario} // Pasar precio del inventario al modal
             />
         </div>
     );
