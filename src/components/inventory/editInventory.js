@@ -8,26 +8,17 @@ import "react-toastify/dist/ReactToastify.css";
 
 const URI_INVENTARIOS = "http://localhost:8000/inventarios";
 const URI_PRODUCTOS = "http://localhost:8000/productos";
+const URI_UNIDADES_MEDIDA = "http://localhost:8000/unidadMedida";
 
 const CompEditInventory = () => {
   const { id } = useParams();
   const [productos, setProductos] = useState([]);
+  const [unidadesMedida, setUnidadesMedida] = useState([]);
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
-  const [unidad_medida, setUnidadMedida] = useState("");
+  const [unidadMedidaSeleccionada, setUnidadMedidaSeleccionada] = useState(null);
   const [stock, setStock] = useState("");
   const [precio, setPrecio] = useState("");
   const navigate = useNavigate();
-
-  const unidadOptions = [
-    { value: "UNIDAD", label: "Unidad" },
-    { value: "BOTELLA", label: "Botella" },
-    { value: "COPA", label: "Copa" },
-    { value: "VASO", label: "Vaso" },
-    { value: "LATA", label: "Lata" },
-    { value: "SIXPACK", label: "Sixpack" },
-    { value: "VALDE", label: "Valde" },
-    { value: "CAJA", label: "Caja" },
-  ];
 
   // Función para cargar los productos
   const fetchProductos = useCallback(async () => {
@@ -48,60 +39,90 @@ const CompEditInventory = () => {
     }
   }, []);
 
+  // Función para cargar las unidades de medida
+  const fetchUnidadesMedida = async () => {
+    try {
+      const res = await axios.get(URI_UNIDADES_MEDIDA);
+      if (res.status === 200) {
+        const unidadesData = res.data.map((unidad) => ({
+          value: unidad.id,
+          label: unidad.nombre_unidad,
+          ...unidad,
+        }));
+        setUnidadesMedida(unidadesData);
+        return unidadesData;
+      }
+    } catch (error) {
+      console.error("Error al cargar unidades de medida:", error);
+      toast.error("Error al cargar unidades de medida.");
+      return [];
+    }
+  };
+
   // Función para cargar los datos del inventario
   const fetchInventario = useCallback(
-    async (productosData) => {
-      try {
-        const res = await axios.get(`${URI_INVENTARIOS}/${id}`);
-        const inventario = res.data;
+    async (productosData, unidadesData) => {
+        try {
+            const res = await axios.get(`${URI_INVENTARIOS}/${id}`);
+            const inventario = res.data;
 
-        // Buscar el producto relacionado en la lista de productos
-        const productoRelacionado = productosData.find(
-          (producto) => producto.id === inventario.id_producto
-        );
+            // Buscar el producto relacionado en la lista de productos
+            const productoRelacionado = productosData.find(
+                (producto) => producto.id === inventario.id_producto
+            );
 
-        setProductoSeleccionado({
-          value: productoRelacionado?.id || null,
-          label: productoRelacionado?.nombre_producto || "Producto no encontrado",
-          categoria_nombre: productoRelacionado?.categoria_nombre || "Sin categoría",
-          ...productoRelacionado,
-        });
+            setProductoSeleccionado({
+                value: productoRelacionado?.id || null,
+                label: productoRelacionado?.nombre_producto || "Producto no encontrado",
+                categoria_nombre: productoRelacionado?.categoria_nombre || "Sin categoría",
+                ...productoRelacionado,
+            });
 
-        // Asignar valores del inventario
-        setUnidadMedida(inventario.unidad_medida || "");
-        setStock(inventario.stock?.toString() || "");
-        setPrecio(inventario.precio?.toString() || ""); // Capturar el precio desde el inventario
-      } catch (error) {
-        console.error("Error al cargar el inventario:", error);
-        toast.error("Error al cargar el inventario.");
-      }
+            // Buscar la unidad de medida relacionada
+            const unidadMedidaRelacionada = unidadesData.find(
+                (unidad) => unidad.label === inventario.unidad_medida.nombre_unidad
+            );
+
+            if (unidadMedidaRelacionada) {
+                setUnidadMedidaSeleccionada(unidadMedidaRelacionada);
+            } else {
+                console.warn("Unidad de medida no encontrada en el inventario.");
+            }
+
+            setStock(inventario.stock?.toString() || "");
+            setPrecio(inventario.precio?.toString() || ""); // Capturar el precio desde el inventario
+        } catch (error) {
+            console.error("Error al cargar el inventario:", error);
+            toast.error("Error al cargar el inventario.");
+        }
     },
     [id]
-  );
+);
 
   // useEffect para cargar los datos iniciales
   useEffect(() => {
     const fetchData = async () => {
-      const productosData = await fetchProductos();
-      await fetchInventario(productosData);
+        const unidadesData = await fetchUnidadesMedida();
+        const productosData = await fetchProductos();
+        await fetchInventario(productosData, unidadesData);
     };
 
     fetchData();
-  }, [fetchProductos, fetchInventario]);
+}, [fetchProductos, fetchInventario]);
 
   const handleUnidadMedidaChange = (selectedOption) => {
-    setUnidadMedida(selectedOption?.value || "");
+    setUnidadMedidaSeleccionada(selectedOption);
   };
 
   const handleActualizarInventario = async () => {
-    if (!unidad_medida || !stock || !precio) {
+    if (!unidadMedidaSeleccionada || !stock || !precio) {
       toast.error("Por favor, completa todos los campos obligatorios.");
       return;
     }
 
     try {
       await axios.put(`${URI_INVENTARIOS}/${id}`, {
-        unidad_medida,
+        id_unidad_medida: unidadMedidaSeleccionada.value,
         stock: parseFloat(stock),
         precio: parseFloat(precio),
         fecha_actualizacion: new Date(),
@@ -149,15 +170,15 @@ const CompEditInventory = () => {
             </Card.Body>
           </Card>
         )}
-        
+
         <Form.Group className="mb-3">
           <Form.Label>Unidad de Medida</Form.Label>
           <Select
-            options={unidadOptions}
-            value={unidadOptions.find((option) => option.value === unidad_medida)}
-            onChange={handleUnidadMedidaChange}
-            placeholder="Selecciona la unidad de medida"
-            isClearable
+              options={unidadesMedida}
+              value={unidadMedidaSeleccionada}
+              onChange={handleUnidadMedidaChange}
+              placeholder="Selecciona la unidad de medida"
+              isClearable
           />
         </Form.Group>
         <Form.Group className="mb-3">

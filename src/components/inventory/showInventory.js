@@ -7,6 +7,7 @@ import 'jspdf-autotable';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import KardexModal from '../kardex/showKardex';
+import GlobalKardexModal from '../kardex/ShowKardexGlobal';
 import '../../assets/styles/mainTables.scss';
 
 const URI_INVENTARIOS = 'http://localhost:8000/inventarios';
@@ -20,8 +21,10 @@ const CompShowInventory = () => {
     const [showModal, setShowModal] = useState(false);
     const [selectedInventario, setSelectedInventario] = useState(null);
     const [kardexData, setKardexData] = useState([]);
-    const [precioInventario, setPrecioInventario] = useState(0); // Nuevo estado para el precio
+    const [precioInventario, setPrecioInventario] = useState(0);
+    const [nombreProducto, setNombreProducto] = useState(''); // Nuevo estado para el nombre del producto
     const [showKardexModal, setShowKardexModal] = useState(false);
+    const [showGlobalKardexModal, setShowGlobalKardexModal] = useState(false);
 
     useEffect(() => {
         getInventarios();
@@ -42,13 +45,14 @@ const CompShowInventory = () => {
         }
     };
 
-    // Obtener Kardex de un producto
-    const getKardex = async (id_inventario) => {
+    // Obtener Kardex de un producto específico
+    const getKardex = async (id_inventario, productoNombre) => {
         try {
             const res = await axios.get(`${URI_KARDEX}/${id_inventario}`);
             if (res.status === 200) {
-                setKardexData(res.data.movimientos); // Movimientos del Kardex
-                setPrecioInventario(res.data.precio); // Precio del inventario
+                setKardexData(res.data.movimientos);
+                setPrecioInventario(res.data.precio);
+                setNombreProducto(productoNombre); // Actualiza el nombre del producto
                 setShowKardexModal(true);
             } else {
                 toast.error('No se encontraron movimientos en el Kardex para este inventario.');
@@ -61,7 +65,7 @@ const CompShowInventory = () => {
 
     const formatFecha = (fecha) => {
         if (!fecha) return 'Sin fecha';
-        const opciones = {
+        return new Date(fecha).toLocaleString('es-PE', {
             year: 'numeric',
             month: '2-digit',
             day: '2-digit',
@@ -69,11 +73,9 @@ const CompShowInventory = () => {
             minute: '2-digit',
             second: '2-digit',
             hour12: false,
-        };
-        return new Date(fecha).toLocaleString('es-PE', opciones);
+        });
     };
 
-    // Filtrar inventarios por término de búsqueda
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);
         setCurrentPage(1);
@@ -89,22 +91,15 @@ const CompShowInventory = () => {
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    const getStockClass = (stock) => {
-        return stock > 30 ? 'high' : stock >= 10 ? 'medium' : 'low';
-    };
-
-    const getEstadoClass = (stock) => {
-        return stock > 0 ? 'activo' : 'inactivo';
-    };
+    const getStockClass = (stock) => (stock > 30 ? 'high' : stock >= 10 ? 'medium' : 'low');
+    const getEstadoClass = (stock) => (stock > 0 ? 'activo' : 'inactivo');
 
     const handleShowModal = (inventario) => {
         setSelectedInventario(inventario);
         setShowModal(true);
     };
 
-    const handleCloseModal = () => {
-        setShowModal(false);
-    };
+    const handleCloseModal = () => setShowModal(false);
 
     const handleDeleteConfirmed = async () => {
         if (selectedInventario) {
@@ -124,17 +119,21 @@ const CompShowInventory = () => {
         const doc = new jsPDF();
         doc.text('Reporte de Inventarios', 20, 10);
         doc.autoTable({
-            head: [['Producto', 'Stock', 'Precio', 'Unidad de Medida', 'Estado']],
+            head: [
+                ['Producto', 'Stock', 'Precio', 'Unidad de Medida', 'Fecha Vencimiento', 'Fecha Actualización', 'Estado']
+            ],
             body: inventarios.map((inventario) => [
                 inventario.producto?.nombre_producto || 'Producto no encontrado',
                 inventario.stock,
-                `S/${parseFloat(inventario.precio || 0).toFixed(2)}`, // Mostrar precio del inventario
-                inventario.unidad_medida || 'N/A',
+                `S/${parseFloat(inventario.precio || 0).toFixed(2)}`,
+                inventario.unidad_medida?.nombre_unidad || 'N/A',
+                inventario.producto?.fecha_vencimiento?.split('T')[0] || 'Sin fecha',
+                formatFecha(inventario.fecha_actualizacion),
                 inventario.stock > 0 ? 'Activo' : 'Inactivo',
             ]),
         });
         doc.save('reporte_inventarios.pdf');
-    };
+    };     
 
     return (
         <div className="container">
@@ -143,6 +142,9 @@ const CompShowInventory = () => {
                     <i className="fa fa-plus"></i> Agregar Inventario
                 </Link>
                 <div className="search-container">
+                    <Button onClick={() => setShowGlobalKardexModal(true)} className="btn btn-info">
+                        <i className="fa fa-solid fa-right-left"></i>
+                    </Button>
                     <Button onClick={generatePDF} className="btn btn-secondary" title="Generar reporte">
                         <i className="fa fa-print"></i>
                     </Button>
@@ -155,6 +157,7 @@ const CompShowInventory = () => {
                     />
                 </div>
             </div>
+
             <div className="table-responsive">
                 <table className="table">
                     <thead>
@@ -163,7 +166,8 @@ const CompShowInventory = () => {
                             <th>Stock</th>
                             <th>Precio</th>
                             <th>Unidad de Medida</th>
-                            <th>Fecha y Hora</th>
+                            <th>Fecha Vencimiento</th>
+                            <th>Movimiento</th>
                             <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
@@ -178,7 +182,8 @@ const CompShowInventory = () => {
                                     </span>
                                 </td>
                                 <td>S/{parseFloat(inventario.precio || 0).toFixed(2)}</td>
-                                <td>{inventario.unidad_medida || 'N/A'}</td>
+                                <td>{inventario.unidad_medida?.nombre_unidad || 'N/A'}</td>
+                                <td>{inventario.producto?.fecha_vencimiento || 'Sin fecha'}</td>
                                 <td>{formatFecha(inventario.fecha_actualizacion)}</td>
                                 <td>
                                     <span className={`chip estado ${getEstadoClass(inventario.stock)}`}>
@@ -187,10 +192,12 @@ const CompShowInventory = () => {
                                 </td>
                                 <td>
                                     <button
-                                        onClick={() => getKardex(inventario.id)}
+                                        onClick={() =>
+                                            getKardex(inventario.id, inventario.producto?.nombre_producto)
+                                        }
                                         className="btn btn-warning"
                                     >
-                                        <i className="fa-solid fa-clock"></i> Kardex
+                                        <i className="fa fa-solid fa-right-left"></i>
                                     </button>
                                     <Link to={`/inventarios/edit/${inventario.id}`} className="btn btn-info">
                                         <i className="fa-solid fa-pen-to-square"></i>
@@ -241,7 +248,13 @@ const CompShowInventory = () => {
                 show={showKardexModal}
                 onHide={() => setShowKardexModal(false)}
                 kardexData={kardexData}
-                precioInventario={precioInventario} // Pasar precio del inventario al modal
+                precioInventario={precioInventario}
+                nombreProducto={nombreProducto}
+            />
+
+            <GlobalKardexModal
+                show={showGlobalKardexModal}
+                onHide={() => setShowGlobalKardexModal(false)}
             />
         </div>
     );

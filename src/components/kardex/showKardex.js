@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal } from 'react-bootstrap';
 import { format } from 'date-fns';
 
-const KardexModal = ({ show, onHide, kardexData, precioInventario }) => {
+const KardexModal = ({ show, onHide, kardexData, precioInventario, nombreProducto }) => {
     const calcularSaldos = (data) => {
         let saldoAcumulado = 0;
         return data.map((mov) => {
@@ -19,7 +19,8 @@ const KardexModal = ({ show, onHide, kardexData, precioInventario }) => {
     return (
         <Modal show={show} onHide={onHide} size="lg">
             <Modal.Header closeButton>
-                <Modal.Title>Kardex del Producto</Modal.Title>
+                {/* Cambia el título dinámicamente */}
+                <Modal.Title>Kardex de {nombreProducto}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 {movimientosConSaldos.length > 0 ? (

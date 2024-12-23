@@ -8,12 +8,14 @@ import "react-toastify/dist/ReactToastify.css";
 import ModalCreateProduct from "./modalProducts";
 
 const URI_PRODUCTOS = "http://localhost:8000/productos";
+const URI_UNIDADES_MEDIDA = "http://localhost:8000/unidadMedida";
 const URI_INVENTARIOS = "http://localhost:8000/inventarios";
 
 const CompCreateInventory = () => {
   const [productos, setProductos] = useState([]);
+  const [unidadesMedida, setUnidadesMedida] = useState([]);
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
-  const [unidad_medida, setUnidadMedida] = useState("");
+  const [unidadMedidaSeleccionada, setUnidadMedidaSeleccionada] = useState(null);
   const [stock, setStock] = useState("");
   const [precio, setPrecio] = useState(""); // Modificable por el usuario
   const [mostrarCrearProductoModal, setMostrarCrearProductoModal] = useState(
@@ -21,16 +23,9 @@ const CompCreateInventory = () => {
   );
   const navigate = useNavigate();
 
-  const unidadOptions = [
-    { value: "UNIDAD", label: "Unidad" },
-    { value: "BOTELLA", label: "Botella" },
-    { value: "COPA", label: "Copa" },
-    { value: "VASO", label: "Vaso" },
-    { value: "LATA", label: "Lata" },
-  ];
-
   useEffect(() => {
     fetchProductos();
+    fetchUnidadesMedida();
   }, []);
 
   const fetchProductos = async () => {
@@ -50,17 +45,34 @@ const CompCreateInventory = () => {
     }
   };
 
+  const fetchUnidadesMedida = async () => {
+    try {
+      const res = await axios.get(URI_UNIDADES_MEDIDA);
+      if (res.status === 200) {
+        setUnidadesMedida(
+          res.data.map((unidad) => ({
+            value: unidad.id,
+            label: unidad.nombre_unidad,
+            ...unidad,
+          }))
+        );
+      }
+    } catch (error) {
+      toast.error("Error al cargar unidades de medida.");
+    }
+  };
+
   const handleSeleccionProducto = (selectedOption) => {
     setProductoSeleccionado(selectedOption);
     setPrecio(selectedOption?.precio_venta || ""); // Rellenar automáticamente el precio
   };
 
   const handleUnidadMedidaChange = (selectedOption) => {
-    setUnidadMedida(selectedOption?.value || "");
+    setUnidadMedidaSeleccionada(selectedOption);
   };
 
   const handleCrearInventario = async () => {
-    if (!productoSeleccionado || !unidad_medida || !stock || !precio) {
+    if (!productoSeleccionado || !unidadMedidaSeleccionada || !stock || !precio) {
       toast.error("Por favor, completa todos los campos.");
       return;
     }
@@ -70,7 +82,7 @@ const CompCreateInventory = () => {
         id_producto: productoSeleccionado.value,
         stock,
         precio,
-        unidad_medida,
+        id_unidad_medida: unidadMedidaSeleccionada.value,
         fecha_actualizacion: new Date(),
       });
       toast.success("Inventario creado exitosamente.");
@@ -116,8 +128,7 @@ const CompCreateInventory = () => {
                 <strong>Descripción:</strong> {productoSeleccionado.descripcion}
               </Card.Text>
               <Card.Text>
-                <strong>Categoría:</strong>{" "}
-                {productoSeleccionado.categoria_nombre}
+                <strong>Categoría:</strong> {productoSeleccionado.categoria_nombre}
               </Card.Text>
               <Card.Text>
                 <strong>Costo:</strong> S/{productoSeleccionado.precio_compra}
@@ -136,7 +147,7 @@ const CompCreateInventory = () => {
         <Form.Group className="mb-3">
           <Form.Label>Unidad de Medida</Form.Label>
           <Select
-            options={unidadOptions}
+            options={unidadesMedida}
             onChange={handleUnidadMedidaChange}
             placeholder="Selecciona la unidad de medida"
             isClearable
