@@ -7,6 +7,8 @@ import 'jspdf-autotable';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../assets/styles/mainTables.scss';
+import defaultImage from '../../assets/products_defect.png';
+
 
 const URI = 'http://localhost:8000/productos/';
 
@@ -146,11 +148,11 @@ const CompShowProducts = () => {
                             <td>S/{producto.precio_venta}</td>
                             <td>{producto.fecha_vencimiento || 'No tiene'}</td>
                             <td>
-                                <img 
-                                    src={producto.imagen} 
-                                    alt={producto.nombre_producto} 
-                                    style={{ width: '100px', height: 'auto' }}
-                                />
+                            <img 
+                                src={producto.imagen ? producto.imagen : defaultImage} 
+                                alt={producto.nombre_producto || 'Imagen por defecto'} 
+                                style={{ width: '100px', height: 'auto' }}
+                            />
                             </td>
                             <td>
                                 <span className={`chip estado ${getEstadoClass(producto.estado)}`}>
